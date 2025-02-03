@@ -11,12 +11,12 @@ class Client
 private:
 	SOCKET udpSocket;
 	sockaddr_in serverAddr{};
+	void Listen();
 public:
 	Client();
 	~Client();
 	int Connect();
 	void Send();
-	void Listen();
 	void Update();
 	int Disconnect();
 };

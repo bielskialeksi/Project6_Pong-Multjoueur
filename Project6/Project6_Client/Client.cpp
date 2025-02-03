@@ -51,7 +51,8 @@ int Client::Connect()
 
 void Client::Send()
 {
-	const char* message = "Send";
+	std::cout << "Client Send" << std::endl;
+	const char* message = "Hey";
 	sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 

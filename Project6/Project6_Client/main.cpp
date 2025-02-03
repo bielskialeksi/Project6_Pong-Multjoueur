@@ -15,8 +15,7 @@ int main() {
                 window.close();
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                client.Disconnect();
-                window.close();
+                client.Send();
             }
 
         }

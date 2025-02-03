@@ -20,7 +20,7 @@ int Client::Connect()
 		return 1;
 	}
 
-	sockaddr_in serverAddr{};
+
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(50500);  // ⚠️ On utilise 50500
 	inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);  // Adresse du serveur
@@ -37,6 +37,16 @@ int Client::Connect()
 
 void Client::Update()
 {
+	char buffer[1024];
+	sockaddr_in senderAddr;
+	int senderLen = sizeof(senderAddr);
+
+	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer), 0, (sockaddr*)&senderAddr, &senderLen);
+	if (bytesReceived > 0) {
+		buffer[bytesReceived] = '\0';
+		std::cout << " Message : " << buffer << std::endl;
+	}
+
 }
 
 int Client::Disconnect()

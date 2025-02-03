@@ -1,20 +1,22 @@
 #pragma once
+
 #include <iostream>
 #include <winsock2.h>
-#include <ws2tcpip.h>  // Nécessaire pour inet_pton()
+#include <ws2tcpip.h>
 
 #pragma comment(lib, "ws2_32.lib")
 
-class Client
+class Serveur
 {
 private:
 	SOCKET udpSocket;
+	sockaddr_in clientAddr;
 	sockaddr_in serverAddr{};
 public:
-	Client();
-	~Client();
-	int Connect();
-	void Update();
-	int Disconnect();
+	Serveur();
+	~Serveur();
+	int Begin();
+	int Update();
+	int Stop();
 };
 

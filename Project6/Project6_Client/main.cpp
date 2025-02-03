@@ -19,7 +19,7 @@ int main() {
                 window.close();
             }
         }
-
+        client.Update();
         window.clear(sf::Color::Red);
         window.display();
     }

@@ -47,11 +47,11 @@ void Client::Update()
 	sockaddr_in senderAddr;
 	int senderLen = sizeof(senderAddr);
 
-	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer), 0, (sockaddr*)&senderAddr, &senderLen);
+	/*int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer), 0, (sockaddr*)&senderAddr, &senderLen);
 	if (bytesReceived > 0 ) {
 		buffer[bytesReceived] = '\0';
 		std::cout << " Message : " << buffer << std::endl;
-	}
+	}*/
 
 }
 

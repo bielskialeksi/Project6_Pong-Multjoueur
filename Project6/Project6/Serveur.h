@@ -6,16 +6,20 @@
 
 #pragma comment(lib, "ws2_32.lib")
 #include <vector>
+#include <random>
+#include <string>
 
 struct LobbyTwoPlayers {
 	sockaddr_in player1;
 	sockaddr_in player2;
+	const char* code;
 };
 struct LobbyFourPlayers {
 	sockaddr_in player1;
 	sockaddr_in player2;
 	sockaddr_in player3;
 	sockaddr_in player4;
+	const char* code;
 };
 
 class Serveur
@@ -42,5 +46,6 @@ public:
 
 	void Send(sockaddr_in client , const char* message );
 	bool compare_addresses(const sockaddr_in& addr1, const sockaddr_in& addr2);
+	bool isNullSockaddr(const sockaddr_in& addr);
 };
 

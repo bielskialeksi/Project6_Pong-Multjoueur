@@ -109,6 +109,15 @@ void Serveur::AddList(sockaddr_in newclient)
 /// <param name="newclient"></param>
 void Serveur::CreateLobby(sockaddr_in newclient)
 {
+	LobbyTwoPlayers newLobby;
+	memset(&newLobby.player1, 0, sizeof(sockaddr_in));
+	memset(&newLobby.player2, 0, sizeof(sockaddr_in));
+	newLobby.player1 = newclient;
+	ListLobbyTwoPlayers.push_back(newLobby);
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distrib(10000, 99999);
+	newLobby.code = std::to_string(distrib(gen)).c_str();
 }
 
 /// <summary>
@@ -118,6 +127,14 @@ void Serveur::CreateLobby(sockaddr_in newclient)
 /// <param name="message"></param>
 void Serveur::JoinLobby(sockaddr_in newclient, const char* message)
 {
+	//Base 
+	for (LobbyTwoPlayers lobby : ListLobbyTwoPlayers) {
+		if (lobby.code == message) {
+			if (isNullSockaddr(lobby.player2))
+				lobby.player2 = newclient;
+		}
+	}
+	// make a system with code 
 }
 
 
@@ -149,4 +166,16 @@ bool Serveur::compare_addresses(const sockaddr_in& addr1, const sockaddr_in& add
 	return (addr1.sin_family == addr2.sin_family) &&
 		(addr1.sin_port == addr2.sin_port) &&
 		(memcmp(&addr1.sin_addr, &addr2.sin_addr, sizeof(addr1.sin_addr)) == 0);
+}
+
+
+/// <summary>
+/// Verify if a sockaddr_in is non initialize or equal to 0
+/// </summary>
+/// <param name="addr"></param>
+/// <returns></returns>
+bool Serveur::isNullSockaddr(const sockaddr_in& addr) {
+	return addr.sin_family == 0 &&
+		addr.sin_port == 0 &&
+		addr.sin_addr.s_addr == 0;
 }

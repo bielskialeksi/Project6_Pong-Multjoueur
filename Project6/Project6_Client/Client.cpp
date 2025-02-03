@@ -35,6 +35,12 @@ int Client::Connect()
 
 }
 
+void Client::Send()
+{
+	const char* message = "Send";
+	sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+}
+
 void Client::Update()
 {
 	char buffer[1024];
@@ -42,7 +48,7 @@ void Client::Update()
 	int senderLen = sizeof(senderAddr);
 
 	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer), 0, (sockaddr*)&senderAddr, &senderLen);
-	if (bytesReceived > 0) {
+	if (bytesReceived > 0 ) {
 		buffer[bytesReceived] = '\0';
 		std::cout << " Message : " << buffer << std::endl;
 	}
@@ -51,6 +57,8 @@ void Client::Update()
 
 int Client::Disconnect()
 {
+	const char* message = "Disconnect";
+	sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 	closesocket(udpSocket);
 	WSACleanup();
 	return 0;

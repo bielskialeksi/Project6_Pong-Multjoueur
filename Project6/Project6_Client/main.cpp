@@ -18,6 +18,7 @@ int main() {
                 client.Disconnect();
                 window.close();
             }
+
         }
         client.Update();
         window.clear(sf::Color::Red);

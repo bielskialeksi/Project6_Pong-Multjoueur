@@ -14,6 +14,7 @@ public:
 	Client();
 	~Client();
 	int Connect();
+	void Send();
 	void Update();
 	int Disconnect();
 };

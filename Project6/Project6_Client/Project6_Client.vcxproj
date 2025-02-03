@@ -151,6 +151,9 @@ sfml-system-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="GameMenu.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="PingPong.otf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

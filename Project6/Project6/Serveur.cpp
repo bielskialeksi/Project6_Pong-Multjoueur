@@ -7,7 +7,10 @@ Serveur::Serveur()
 Serveur::~Serveur()
 {
 }
-
+/// <summary>
+/// create Serveur
+/// </summary>
+/// <returns></returns>
 int Serveur::Begin()
 {
 	WSADATA wsaData;
@@ -35,6 +38,11 @@ int Serveur::Begin()
 	return 0;
 }
 
+
+/// <summary>
+/// get the message and send to other client 
+/// </summary>
+/// <returns></returns>
 int Serveur::Update()
 {
 	char buffer[1024];
@@ -65,6 +73,10 @@ int Serveur::Update()
 	return 0;
 }
 
+/// <summary>
+/// Stop serveur
+/// </summary>
+/// <returns></returns>
 int Serveur::Stop()
 {
 	closesocket(udpSocket);
@@ -72,6 +84,10 @@ int Serveur::Stop()
 	return 0;
 }
 
+/// <summary>
+/// Verify if it's a new client and add it 
+/// </summary>
+/// <param name="newclient"></param>
 void Serveur::AddList(sockaddr_in newclient)
 {
 	for (const auto& addr : clientAddr) {
@@ -86,6 +102,31 @@ void Serveur::AddList(sockaddr_in newclient)
 	std::cout << "Adresse ajoutée." << std::endl;
 }
 
+
+/// <summary>
+/// Create a Lobby of two players
+/// </summary>
+/// <param name="newclient"></param>
+void Serveur::CreateLobby(sockaddr_in newclient)
+{
+}
+
+/// <summary>
+/// Make a Player join a lobby 
+/// </summary>
+/// <param name="newclient"></param>
+/// <param name="message"></param>
+void Serveur::JoinLobby(sockaddr_in newclient, const char* message)
+{
+}
+
+
+
+/// <summary>
+/// Send a message to other client
+/// </summary>
+/// <param name="clientadr"></param>
+/// <param name="message"></param>
 void Serveur::Send(sockaddr_in clientadr, const char* message)
 {
 	std::cout << "Serveur Send" << std::endl;
@@ -97,6 +138,12 @@ void Serveur::Send(sockaddr_in clientadr, const char* message)
 	}
 }
 
+/// <summary>
+/// Compare the adress of enter two sockaddr_in
+/// </summary>
+/// <param name="addr1"></param>
+/// <param name="addr2"></param>
+/// <returns></returns>
 bool Serveur::compare_addresses(const sockaddr_in& addr1, const sockaddr_in& addr2) {
 	// Comparaison des adresses IP et des ports
 	return (addr1.sin_family == addr2.sin_family) &&

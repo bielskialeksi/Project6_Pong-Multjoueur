@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
-#include "Client.h"
 
+#include "Client.h"
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML depuis dossier projet !");
     Client client;

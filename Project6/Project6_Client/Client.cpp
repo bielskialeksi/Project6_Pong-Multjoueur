@@ -1,6 +1,20 @@
 ﻿#include "Client.h"
 
 
+void Client::Listen()
+{
+	char buffer[1024];
+	sockaddr_in senderAddr;
+	int senderLen = sizeof(senderAddr);
+
+	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer), 0, (sockaddr*)&senderAddr, &senderLen);
+	if (bytesReceived > 0) {
+		buffer[bytesReceived] = '\0';
+		std::cout << " Message : " << buffer << std::endl;
+	}
+
+}
+
 Client::Client()
 {
 }
@@ -43,16 +57,8 @@ void Client::Send()
 
 void Client::Update()
 {
-	char buffer[1024];
-	sockaddr_in senderAddr;
-	int senderLen = sizeof(senderAddr);
-
-	/*int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer), 0, (sockaddr*)&senderAddr, &senderLen);
-	if (bytesReceived > 0 ) {
-		buffer[bytesReceived] = '\0';
-		std::cout << " Message : " << buffer << std::endl;
-	}*/
-
+	std::thread listenerThread(&Client::Listen, this);
+	listenerThread.detach();
 }
 
 int Client::Disconnect()

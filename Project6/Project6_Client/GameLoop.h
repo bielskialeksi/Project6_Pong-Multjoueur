@@ -2,7 +2,7 @@
 class GameLoop
 {
 private:
-	bool isPlaying = false;
+	bool isPlaying = true;
 public:
 	GameLoop();
 };

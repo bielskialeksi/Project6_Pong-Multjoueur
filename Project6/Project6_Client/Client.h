@@ -13,6 +13,7 @@ public:
 	Client();
 	~Client();
 	int Connect();
+	void Update();
 	int Disconnect();
 };
 

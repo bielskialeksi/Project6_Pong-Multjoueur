@@ -35,6 +35,10 @@ int Client::Connect()
 
 }
 
+void Client::Update()
+{
+}
+
 int Client::Disconnect()
 {
 	closesocket(udpSocket);

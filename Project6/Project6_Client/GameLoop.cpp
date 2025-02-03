@@ -10,29 +10,14 @@ GameLoop::GameLoop()
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML depuis dossier projet !");
     Client client;
     client.Connect();
+    GameMenu menu;
 
 
     while (window.isOpen()) {
         if (isPlaying)
             Game();
         else
-            GameMenu();
-
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                client.Disconnect();
-                window.close();
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                client.Disconnect();
-                window.close();
-            }
-
-        }
-        client.Update();
-        window.clear(sf::Color::Red);
-        window.display();
+            menu.Loop(&window, &client);
     }
     client.~Client();
 }

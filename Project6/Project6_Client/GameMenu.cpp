@@ -53,7 +53,7 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
     }
 
     client->Update(0, 0);
-    window->clear(sf::Color::Red);
+    window->clear(sf::Color::Black);
     window->draw(printedPseudo);
     window->display();
 }

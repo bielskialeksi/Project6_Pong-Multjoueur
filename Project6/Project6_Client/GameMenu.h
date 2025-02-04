@@ -1,5 +1,12 @@
 #pragma once
 #include "Client.h"
+
+enum Menu {
+	Main = 0,
+	Host,
+	Join
+};
+
 class GameMenu
 {
 private:
@@ -12,6 +19,9 @@ private:
 	
 
 	sf::Texture texture;
+
+	int actualMenuIndex = 0;
+	int selectedButtonIndex = 0;
 
 	
 public:

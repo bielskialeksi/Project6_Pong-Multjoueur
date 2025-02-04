@@ -45,7 +45,7 @@ void Game::Loop(sf::RenderWindow* window, Client* client)
     }
     MoveBall();
     client->Update(0,0);
-    window->clear(sf::Color::Red);
+    window->clear(sf::Color::Green);
     window->draw(ball->GetShape());
     window->draw(racket_1->GetShape());
     window->draw(racket_2->GetShape());

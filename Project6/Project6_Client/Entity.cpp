@@ -25,8 +25,12 @@ void Entity::init()
 	m_shape.setFillColor(m_color);
 }
 
-void Entity::Move(float, float)
+void Entity::Move(float x, float y)
 {
+	m_pos.x += x;
+	m_pos.y += y;
+
+	m_shape.setPosition(m_pos);
 }
 
 const sf::RectangleShape Entity::GetShape()

@@ -16,6 +16,7 @@ void Client::Listen()
 	if (bytesReceived > 0) {
 		buffer[bytesReceived] = '\0';
 		std::cout << " Message : " << buffer << std::endl;
+		jsonToRead = buffer;
 	}
 
 }
@@ -26,6 +27,9 @@ Client::Client()
 
 Client::~Client()
 {
+	if (listenerThread.joinable()) {
+		listenerThread.join();  // Attend que le thread se termine proprement
+	}
 }
 /// <summary>
 /// Mqke the first connexion with the serveur
@@ -63,17 +67,24 @@ int Client::Connect()
 void Client::Send()
 {
 	std::cout << "Client Send" << std::endl;
-	const char* message = "Hey";
-	sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	sendto(udpSocket, jsonToSend.c_str(), strlen(jsonToSend.c_str()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 
 /// <summary>
 /// Listen the serveur and create next package and send to serveur;
 /// </summary>
-void Client::Update()
+void Client::Update(int posPadx, int posPady)
 {
-	std::thread listenerThread(&Client::Listen, this);
-	listenerThread.detach();
+	CreateJson(posPadx, posPady);
+	if (!listening) {  // Vérifie si un thread est déjà lancé
+		listening = true;
+		listenerThread = std::thread(&Client::Listen, this);
+	}
+	if (jsonToRead != "") {
+		ReadJson();
+		jsonToRead.clear();
+	}
+	Send();
 }
 
 /// <summary>
@@ -111,7 +122,7 @@ void Client::CreateJson(int posPadx, int PosPady)
 
 	std::string jsonString = buffer.GetString();
 
-	jsonToSend = jsonString.c_str();
+	jsonToSend = jsonString;
 }
 
 /// <summary>
@@ -119,4 +130,46 @@ void Client::CreateJson(int posPadx, int PosPady)
 /// </summary>
 void Client::ReadJson()
 {
+	rapidjson::Document doc;
+	doc.Parse(jsonToRead.c_str());
+
+	if (doc.HasParseError()) {
+		std::cerr << "Erreur de parsing JSON !" << std::endl;
+		return;
+	}
+
+	//Read pos ADV
+	if (doc.HasMember("PlayerAdv") && doc["PlayerAdv"].IsObject()) {
+		const rapidjson::Value& playerAdv = doc["PlayerAdv"]; // Récupérer l'objet
+
+		// Vérifier si "Posx" et "Posy" existent
+		if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
+			std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+		}
+		if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
+			std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+		}
+	}
+
+	//Read pos Ball 
+	if (doc.HasMember("Ball") && doc["Ball"].IsObject()) {
+		const rapidjson::Value& playerAdv = doc["Ball"]; // Récupérer l'objet
+
+		// Vérifier si "Posx" et "Posy" existent
+		if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
+			std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+		}
+		if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
+			std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+		}
+
+		// Vérifier si "Dirx" et "Diry" existent
+		if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
+			std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+		}
+		if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
+			std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+		}
+	}
+
 }

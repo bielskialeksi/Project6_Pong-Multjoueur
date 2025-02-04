@@ -12,14 +12,14 @@
 struct LobbyTwoPlayers {
 	sockaddr_in player1;
 	sockaddr_in player2;
-	const char* code;
+	std::string code;
 };
 struct LobbyFourPlayers {
 	sockaddr_in player1;
 	sockaddr_in player2;
 	sockaddr_in player3;
 	sockaddr_in player4;
-	const char* code;
+	std::string code;
 };
 
 class Serveur
@@ -32,7 +32,8 @@ private:
 	std::vector<LobbyTwoPlayers> ListLobbyTwoPlayers;
 	std::vector<LobbyFourPlayers> ListLobbyFourPlayers;
 
-
+	void CreateJson(int posBallx, int PosBally , int DirBallx , int DirBally);
+	void ReadJson();
 public:
 	Serveur();
 	~Serveur();

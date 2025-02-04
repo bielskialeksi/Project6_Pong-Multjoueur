@@ -2,6 +2,7 @@
 
 #include "Client.h"
 int main() {
+    
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML depuis dossier projet !");
     Client client;
     client.Connect();
@@ -19,7 +20,7 @@ int main() {
             }
 
         }
-        client.Update();
+        client.Update(0,0);
         window.clear(sf::Color::Red);
         window.display();
     }

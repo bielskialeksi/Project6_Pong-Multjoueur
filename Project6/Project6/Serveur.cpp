@@ -4,6 +4,7 @@
 #include <rapidjson/stringbuffer.h>
 
 
+
 Serveur::Serveur()
 {
 }
@@ -129,7 +130,8 @@ const char* Serveur::CreateLobby(sockaddr_in newclient)
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(10000, 99999);
-	newLobby.code = std::to_string(distrib(gen)).c_str();
+	newLobby.code = std::to_string(distrib(gen));
+	return newLobby.code.c_str();
 }
 
 /// <summary>
@@ -190,4 +192,23 @@ bool Serveur::isNullSockaddr(const sockaddr_in& addr) {
 	return addr.sin_family == 0 &&
 		addr.sin_port == 0 &&
 		addr.sin_addr.s_addr == 0;
+}
+
+/// <summary>
+/// Modify json with the information of the Ball
+/// </summary>
+/// <param name="posBallx"></param>
+/// <param name="PosBally"></param>
+/// <param name="DirBallx"></param>
+/// <param name="DirBally"></param>
+void Serveur::CreateJson(int posBallx, int PosBally, int DirBallx, int DirBally)
+{
+}
+
+/// <summary>
+/// Read Json 
+/// </summary>
+void Serveur::ReadJson()
+{
+
 }

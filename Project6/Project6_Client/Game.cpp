@@ -43,8 +43,8 @@ void Game::Loop(sf::RenderWindow* window, Client* client)
 
 
     }
-    //MoveBall();
-    client->Update();
+    MoveBall();
+    client->Update(0,0);
     window->clear(sf::Color::Red);
     window->draw(ball->GetShape());
     window->draw(racket_1->GetShape());
@@ -59,8 +59,9 @@ void Game::MoveBall()
 
     if (pos.x + m_Ballx > WINDOW_WIDTH - scale.x || pos.x + m_Ballx < 0)
         m_Ballx *= -1;
+
     if (pos.y + m_Bally < 0 || pos.y + m_Bally > WINDOW_HEIGHT - scale.y)
-        m_Ballx *= -1;
+        m_Bally *= -1;
 
     ball->Move(m_Ballx, m_Bally);
 }

@@ -22,7 +22,7 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
         if (event.type == sf::Event::KeyPressed && event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z)
             std::cout << static_cast<char>(event.key.code) << std::endl;
     }
-    client->Update();
+    client->Update(0,0);
     window->clear(sf::Color::Red);
     window->display();
 }

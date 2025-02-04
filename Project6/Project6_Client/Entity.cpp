@@ -1,8 +1,9 @@
 #include "Entity.h"
+#include "Global.h"
 
 Entity::Entity()
 {
-	m_pos = { 100, 100 };
+	m_pos = { WINDOW_WIDTH / 2, 100 };
 	m_scale = { 50, 50 };
 	m_color = {255, 255, 255};
 	init();

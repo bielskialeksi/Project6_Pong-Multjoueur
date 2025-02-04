@@ -14,7 +14,7 @@ GameLoop::GameLoop()
 
 void GameLoop::Init()
 {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "SFML depuis dossier projet !");
+    window = new sf::RenderWindow(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "SFML depuis dossier projet !");
 }
 
 void GameLoop::Loop()
@@ -27,7 +27,7 @@ void GameLoop::Loop()
     while (window->isOpen()) {
         if (isPlaying) {
 
-            game.loop();
+            game.Loop(window, &client);
         }
         else
             menu.Loop(window, &client);

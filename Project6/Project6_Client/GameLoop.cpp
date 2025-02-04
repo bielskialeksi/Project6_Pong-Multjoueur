@@ -8,17 +8,29 @@
 #include "Client.h"
 GameLoop::GameLoop()
 {
+    Init();
+    Loop();
+}
+
+void GameLoop::Init()
+{
     sf::RenderWindow window(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "SFML depuis dossier projet !");
+}
+
+void GameLoop::Loop()
+{
     Client client;
     client.Connect();
     GameMenu menu;
     Game game;
 
-    while (window.isOpen()) {
-        if (isPlaying)
-            game.Loop(&window, &client);
+    while (window->isOpen()) {
+        if (isPlaying) {
+
+            game.loop();
+        }
         else
-            menu.Loop(&window, &client);
+            menu.Loop(window, &client);
     }
     client.~Client();
 }

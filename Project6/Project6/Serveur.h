@@ -41,7 +41,7 @@ public:
 	int Stop();
 	void AddList(sockaddr_in newclient);
 
-	void CreateLobby(sockaddr_in newclient);
+	const char* CreateLobby(sockaddr_in newclient);
 	void JoinLobby(sockaddr_in newclient, const char* message);
 
 	void Send(sockaddr_in client , const char* message );

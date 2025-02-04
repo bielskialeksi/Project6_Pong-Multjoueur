@@ -11,6 +11,14 @@ class Client
 private:
 	SOCKET udpSocket;
 	sockaddr_in serverAddr{};
+	const char* jsonToSend="";
+	const char* jsonToRead="";
+
+	int PosPadAdvx;
+	int PosPadAdvy;
+	int PosBallx;
+	int PosBally;
+
 	void Listen();
 public:
 	Client();
@@ -19,5 +27,8 @@ public:
 	void Send();
 	void Update();
 	int Disconnect();
+
+	void CreateJson(int posPadx, int PosPady);
+	void ReadJson();
 };
 

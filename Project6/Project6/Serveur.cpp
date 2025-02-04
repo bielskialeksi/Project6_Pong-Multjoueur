@@ -1,4 +1,8 @@
 #include "Serveur.h"
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+
 
 Serveur::Serveur()
 {
@@ -58,6 +62,14 @@ int Serveur::Update()
 			std::cout << "Fermeture du serveur UDP...\n";
 			return 1;
 		}
+		else if (strcmp(buffer, "Create") == 0) {
+			const char* code = CreateLobby(baseclientadr);
+			sendto(udpSocket, code, strlen(code), 0, (sockaddr*)&clientAddr, clientAddrSize);
+		}
+		//else if (strcmp(buffer, "Join") == 0) {
+		//	const char* code = CreateLobby(baseclientadr);
+		//	sendto(udpSocket, code, strlen(code), 0, (sockaddr*)&clientAddr, clientAddrSize);
+		//}
 		else {
 			AddList(baseclientadr);
 			for (sockaddr_in client : clientAddr) {
@@ -107,7 +119,7 @@ void Serveur::AddList(sockaddr_in newclient)
 /// Create a Lobby of two players
 /// </summary>
 /// <param name="newclient"></param>
-void Serveur::CreateLobby(sockaddr_in newclient)
+const char* Serveur::CreateLobby(sockaddr_in newclient)
 {
 	LobbyTwoPlayers newLobby;
 	memset(&newLobby.player1, 0, sizeof(sockaddr_in));

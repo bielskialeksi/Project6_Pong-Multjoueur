@@ -1,6 +1,11 @@
 ﻿#include "Client.h"
 
-
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+/// <summary>
+/// Listen ifthe serveur send a message 
+/// </summary>
 void Client::Listen()
 {
 	char buffer[1024];
@@ -22,7 +27,10 @@ Client::Client()
 Client::~Client()
 {
 }
-
+/// <summary>
+/// Mqke the first connexion with the serveur
+/// </summary>
+/// <returns></returns>
 int Client::Connect()
 {
 	WSADATA wsaData;
@@ -49,6 +57,9 @@ int Client::Connect()
 
 }
 
+/// <summary>
+/// Send a package to serveur
+/// </summary>
 void Client::Send()
 {
 	std::cout << "Client Send" << std::endl;
@@ -56,12 +67,19 @@ void Client::Send()
 	sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 
+/// <summary>
+/// Listen the serveur and create next package and send to serveur;
+/// </summary>
 void Client::Update()
 {
 	std::thread listenerThread(&Client::Listen, this);
 	listenerThread.detach();
 }
 
+/// <summary>
+/// Disconnect Client 
+/// </summary>
+/// <returns></returns>
 int Client::Disconnect()
 {
 	const char* message = "Disconnect";
@@ -69,4 +87,20 @@ int Client::Disconnect()
 	closesocket(udpSocket);
 	WSACleanup();
 	return 0;
+}
+
+/// <summary>
+/// Create a package 
+/// </summary>
+/// <param name="posPadx"></param>
+/// <param name="PosPady"></param>
+void Client::CreateJson(int posPadx, int PosPady)
+{
+}
+
+/// <summary>
+/// Read a package
+/// </summary>
+void Client::ReadJson()
+{
 }

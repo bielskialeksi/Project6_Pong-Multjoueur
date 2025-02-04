@@ -84,7 +84,7 @@ void Client::Update(int posPadx, int posPady)
 		ReadJson();
 		jsonToRead.clear();
 	}
-	Send();
+	
 }
 
 /// <summary>

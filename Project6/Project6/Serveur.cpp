@@ -64,6 +64,10 @@ int Serveur::Update()
 			std::cout << "Fermeture du serveur UDP...\n";
 			return 1;
 		}
+		if (strcmp(buffer, "Disconnect") == 0) {
+			std::cout << "kill client...\n";
+			return 1;
+		}
 		else if (strcmp(buffer, "Create") == 0) {
 			std::string code = CreateLobby(baseclientadr);
 			sendto(udpSocket, code.c_str(), strlen(code.c_str()), 0, (sockaddr*)&clientAddr, clientAddrSize);
@@ -85,6 +89,21 @@ int Serveur::Update()
 		sendto(udpSocket, response, strlen(response), 0, (sockaddr*)&clientAddr, clientAddrSize);
 	}
 	return 0;
+}
+
+/// <summary>
+/// Delete a client in the list of connexion 
+/// </summary>
+/// <param name="client"></param>
+void Serveur::RemoveClientFromList(sockaddr_in client)
+{
+	auto it = std::find_if(clientAddr.begin(), clientAddr.end(),
+		[&](const sockaddr_in& addr) { return compare_addresses(addr, client); });
+
+	if (it != clientAddr.end()) {
+		clientAddr.erase(it);  // Supprimer le client de la liste
+		std::cout << "Client supprimé de la liste.\n";
+	}
 }
 
 /// <summary>

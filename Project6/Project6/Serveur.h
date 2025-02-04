@@ -39,6 +39,7 @@ public:
 	~Serveur();
 	int Begin();
 	int Update();
+	void RemoveClientFromList(sockaddr_in client);
 	int Stop();
 	void AddList(sockaddr_in newclient);
 

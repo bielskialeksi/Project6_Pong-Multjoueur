@@ -3,6 +3,6 @@
 #include "GameLoop.h"
 
 int main() {
-    GameLoop();
+    GameLoop GL;
     return 0;
 }

@@ -24,6 +24,7 @@ int Serveur::Begin()
 	udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
 	if (udpSocket == INVALID_SOCKET) {
 		std::cerr << "Erreur de création du socket\n";
+		WSACleanup();
 		return 1;
 	}
 
@@ -64,8 +65,8 @@ int Serveur::Update()
 			return 1;
 		}
 		else if (strcmp(buffer, "Create") == 0) {
-			const char* code = CreateLobby(baseclientadr);
-			sendto(udpSocket, code, strlen(code), 0, (sockaddr*)&clientAddr, clientAddrSize);
+			std::string code = CreateLobby(baseclientadr);
+			sendto(udpSocket, code.c_str(), strlen(code.c_str()), 0, (sockaddr*)&clientAddr, clientAddrSize);
 		}
 		//else if (strcmp(buffer, "Join") == 0) {
 		//	const char* code = CreateLobby(baseclientadr);
@@ -92,7 +93,10 @@ int Serveur::Update()
 /// <returns></returns>
 int Serveur::Stop()
 {
-	closesocket(udpSocket);
+	if (udpSocket != INVALID_SOCKET) {
+		closesocket(udpSocket);
+		udpSocket = INVALID_SOCKET;  // Marque le socket comme fermé
+	}
 	WSACleanup();
 	return 0;
 }
@@ -120,7 +124,7 @@ void Serveur::AddList(sockaddr_in newclient)
 /// Create a Lobby of two players
 /// </summary>
 /// <param name="newclient"></param>
-const char* Serveur::CreateLobby(sockaddr_in newclient)
+std::string Serveur::CreateLobby(sockaddr_in newclient)
 {
 	LobbyTwoPlayers newLobby;
 	memset(&newLobby.player1, 0, sizeof(sockaddr_in));
@@ -131,7 +135,7 @@ const char* Serveur::CreateLobby(sockaddr_in newclient)
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(10000, 99999);
 	newLobby.code = std::to_string(distrib(gen));
-	return newLobby.code.c_str();
+	return newLobby.code;
 }
 
 /// <summary>
@@ -139,7 +143,7 @@ const char* Serveur::CreateLobby(sockaddr_in newclient)
 /// </summary>
 /// <param name="newclient"></param>
 /// <param name="message"></param>
-void Serveur::JoinLobby(sockaddr_in newclient, const char* message)
+void Serveur::JoinLobby(sockaddr_in newclient, std::string message)
 {
 	//Base 
 	for (LobbyTwoPlayers lobby : ListLobbyTwoPlayers) {

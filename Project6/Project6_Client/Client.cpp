@@ -66,7 +66,7 @@ int Client::Connect()
 /// </summary>
 void Client::Send()
 {
-	std::cout << "Client Send" << std::endl;
+	//std::cout << "Client Send" << std::endl;
 	sendto(udpSocket, jsonToSend.c_str(), strlen(jsonToSend.c_str()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 

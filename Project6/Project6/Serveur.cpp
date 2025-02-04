@@ -60,17 +60,20 @@ int Serveur::Update()
 		std::cout << "Message reçu : " << buffer << "\n";
 
 		// Si le client envoie "exit", on arrête le serveur
+
 		if (strcmp(buffer, "exit") == 0) {
 			std::cout << "Fermeture du serveur UDP...\n";
 			return 1;
 		}
-		if (strcmp(buffer, "Disconnect") == 0) {
-			std::cout << "kill client...\n";
-			return 1;
-		}
-		else if (strcmp(buffer, "Create") == 0) {
+		else if (strcmp(buffer, "host") == 0) {
+			std::cout << "Open host\n";
 			std::string code = CreateLobby(baseclientadr);
 			sendto(udpSocket, code.c_str(), strlen(code.c_str()), 0, (sockaddr*)&clientAddr, clientAddrSize);
+			return 0;
+		}
+		else if (strcmp(buffer, "Disconnect") == 0) {
+			std::cout << "kill client...\n";
+			return 1;
 		}
 		//else if (strcmp(buffer, "Join") == 0) {
 		//	const char* code = CreateLobby(baseclientadr);

@@ -48,7 +48,7 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
         }
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter && pseudo.size() > 0)
         {
-            //Host
+            client->Send("host");
         }
     }
 

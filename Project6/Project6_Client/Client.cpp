@@ -69,6 +69,14 @@ void Client::Send()
 	//std::cout << "Client Send" << std::endl;
 	sendto(udpSocket, jsonToSend.c_str(), strlen(jsonToSend.c_str()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
+/// <summary>
+/// Send a package to serveur
+/// </summary>
+void Client::Send(std::string message)
+{
+	//std::cout << "Client Send" << std::endl;
+	sendto(udpSocket, message.c_str(), strlen(message.c_str()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+}
 
 /// <summary>
 /// Listen the serveur and create next package and send to serveur;

@@ -32,6 +32,7 @@ public:
 	~Client();
 	int Connect();
 	void Send();
+	void Send(std::string message);
 	void Update(int posPadx, int PosPady);
 	int Disconnect();
 

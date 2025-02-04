@@ -96,6 +96,22 @@ int Client::Disconnect()
 /// <param name="PosPady"></param>
 void Client::CreateJson(int posPadx, int PosPady)
 {
+	rapidjson::Document doc;
+	doc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+
+	rapidjson::Value playerAdv(rapidjson::kObjectType);
+	playerAdv.AddMember("Posx", posPadx, allocator);
+	playerAdv.AddMember("Posy", PosPady, allocator);
+	doc.AddMember("PlayerAdv", playerAdv, allocator);
+
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	doc.Accept(writer);
+
+	std::string jsonString = buffer.GetString();
+
+	jsonToSend = jsonString.c_str();
 }
 
 /// <summary>

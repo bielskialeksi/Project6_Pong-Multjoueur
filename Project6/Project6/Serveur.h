@@ -42,8 +42,8 @@ public:
 	int Stop();
 	void AddList(sockaddr_in newclient);
 
-	const char* CreateLobby(sockaddr_in newclient);
-	void JoinLobby(sockaddr_in newclient, const char* message);
+	std::string CreateLobby(sockaddr_in newclient);
+	void JoinLobby(sockaddr_in newclient, std::string message);
 
 	void Send(sockaddr_in client , const char* message );
 	bool compare_addresses(const sockaddr_in& addr1, const sockaddr_in& addr2);

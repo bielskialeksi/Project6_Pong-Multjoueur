@@ -9,7 +9,7 @@ public:
 
 	void init();
 	void Move(float, float);
-	void MoveToPos(float, float);
+	void Reset();
 	const sf::RectangleShape GetShape();
 
 private:

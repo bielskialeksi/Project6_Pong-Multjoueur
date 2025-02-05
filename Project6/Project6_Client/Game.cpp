@@ -22,21 +22,23 @@ void Game::Loop(sf::RenderWindow* window, Client* client)
         }
         if (event.type == sf::Event::KeyPressed)
         {
-            if (event.key.code == sf::Keyboard::Z)
+            switch (event.key.code)
             {
+            case sf::Keyboard::Z:
                 racket_1->Move(0, -10);
-            }
-            if (event.key.code == sf::Keyboard::S)
-            {
+                break;
+            case sf::Keyboard::S:
                 racket_1->Move(0, 10);
-            }
-            if (event.key.code == sf::Keyboard::Up)
-            {
+                break;
+            case sf::Keyboard::Up:
                 racket_2->Move(0, -10);
-            }
-            if (event.key.code == sf::Keyboard::Down)
-            {
+                break;
+            case sf::Keyboard::Down: 
                 racket_2->Move(0, 10);
+                break;
+
+            default:
+                break;
             }
 
         }
@@ -77,16 +79,17 @@ void Game::CheckWin()
 {
     sf::Vector2f pos = ball->GetShape().getPosition();
     sf::Vector2f scale = ball->GetShape().getSize();
-    std::cout << pos.x;
+
     if (pos.x + m_Ballx > WINDOW_WIDTH - scale.x)
     {
         m_score.x += 1;
-        //ball->MoveToPos(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+        ball->Reset();
+        m_Ballx *= -1;
     }
     else if (pos.x + m_Ballx < 0)
     {
         m_score.y += 1;
-        //ball->MoveToPos(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-        //std::cout << pos.x;
+        ball->Reset();
+        m_Ballx *= -1;
     }
 }

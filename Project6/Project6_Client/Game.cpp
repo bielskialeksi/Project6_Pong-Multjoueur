@@ -44,6 +44,7 @@ void Game::Loop(sf::RenderWindow* window, Client* client)
 
     }
     MoveBall();
+
     client->Update(0,0);
     window->clear(sf::Color::Green);
     window->draw(ball->GetShape());
@@ -57,11 +58,35 @@ void Game::MoveBall()
     sf::Vector2f pos = ball->GetShape().getPosition();
     sf::Vector2f scale = ball->GetShape().getSize();
 
+    if(ball->GetShape().getGlobalBounds().intersects(racket_1->GetShape().getGlobalBounds()) || ball->GetShape().getGlobalBounds().intersects(racket_2->GetShape().getGlobalBounds()))
+        m_Ballx *= -1;
+
+    
     if (pos.x + m_Ballx > WINDOW_WIDTH - scale.x || pos.x + m_Ballx < 0)
         m_Ballx *= -1;
+    
 
     if (pos.y + m_Bally < 0 || pos.y + m_Bally > WINDOW_HEIGHT - scale.y)
         m_Bally *= -1;
 
     ball->Move(m_Ballx, m_Bally);
+    CheckWin();
+}
+
+void Game::CheckWin()
+{
+    sf::Vector2f pos = ball->GetShape().getPosition();
+    sf::Vector2f scale = ball->GetShape().getSize();
+    std::cout << pos.x;
+    if (pos.x + m_Ballx > WINDOW_WIDTH - scale.x)
+    {
+        m_score.x += 1;
+        //ball->MoveToPos(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+    }
+    else if (pos.x + m_Ballx < 0)
+    {
+        m_score.y += 1;
+        //ball->MoveToPos(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+        std::cout << pos.x;
+    }
 }

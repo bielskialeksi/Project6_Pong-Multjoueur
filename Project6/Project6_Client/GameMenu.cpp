@@ -125,6 +125,7 @@ void GameMenu::HostMenuEvents(sf::Event event)
             std::cout << "Host" << std::endl;
             //Host
             actualMenuIndex = Menu::Menu_WaitingForOponent;
+            clock.restart();
         }
     }
 }
@@ -206,7 +207,16 @@ void GameMenu::WaitingForOpponentDisplay(sf::RenderWindow* window)
 {
     window->clear(sf::Color::Black);
 
-    InitText(window, "Waiting for Opponent...", { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2}, sf::Color::White, { 0.5f, 0.5f });
+    std::string waitDots = ".";
+    int elapsedTime = static_cast<int>(clock.getElapsedTime().asSeconds());
+    if (elapsedTime % 3 < 1)
+        waitDots = ".";
+    if ((elapsedTime + 2) % 3 < 1)
+        waitDots = "..";
+    if ((elapsedTime + 1) % 3 < 1)
+        waitDots = "...";
+
+    InitText(window, "Waiting for Opponent" + waitDots, { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2}, sf::Color::White, { 0.5f, 0.5f });
     InitText(window, "Lobby ID : 44444", { WINDOW_WIDTH - 10, WINDOW_HEIGHT - 10 }, sf::Color::White, { 1.f, 1.f }, 18);
 }
 

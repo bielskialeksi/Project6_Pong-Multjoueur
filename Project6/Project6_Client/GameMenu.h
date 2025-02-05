@@ -37,6 +37,8 @@ enum JoinMenu {
 class GameMenu
 {
 private:
+	sf::Clock clock;
+
 	std::string fontFilename = "Gameplay.ttf";
 	std::string textureFilename = "metal_texture.jpg";
 

@@ -5,14 +5,14 @@ class Entity
 {
 public:
 
-	enum Movement
+	enum Movement			//state pour le deplacement, utilisé uniquement pour les raquettes
 	{
 		Neutral = 0,
 		Up,
 		Down
 	};
 
-
+	//2 constructeurs
 	Entity();
 	Entity(float, float, float, float);
 
@@ -25,10 +25,10 @@ public:
 
 private:
 
-	Movement m_moveState = Neutral;
-	sf::RectangleShape m_shape;
-	sf::Vector2f m_pos;
-	sf::Vector2f m_scale;
-	sf::Color m_color;
+	Movement m_moveState = Neutral;		//state de l'objet actuelle
+	sf::RectangleShape m_shape;			
+	sf::Vector2f m_pos;					//pos de m_shape
+	sf::Vector2f m_scale;				//taille de m_shape
+	sf::Color m_color;					//couleur de m_shape
 };
 

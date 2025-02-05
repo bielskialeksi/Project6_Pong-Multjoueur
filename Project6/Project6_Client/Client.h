@@ -9,6 +9,8 @@
 class Client
 {
 private:
+	bool conected;
+
 	SOCKET udpSocket;
 	sockaddr_in serverAddr{};
 	std::string jsonToSend="";
@@ -16,6 +18,8 @@ private:
 
 	std::thread listenerThread;
 	bool listening = false;
+
+	rapidjson::Document doc;
 
 	int PosPadAdvx;
 	int PosPadAdvy;
@@ -32,6 +36,10 @@ public:
 	~Client();
 	int Connect();
 	void Send();
+	
+	void Host();
+	void Join(std::string code);
+
 	void Send(std::string message);
 	void Update(int posPadx, int PosPady);
 	int Disconnect();

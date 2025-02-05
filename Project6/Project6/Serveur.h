@@ -10,15 +10,29 @@
 #include <string>
 
 struct LobbyTwoPlayers {
+	int index;
 	sockaddr_in player1;
+	std::string Player1Name;
+
 	sockaddr_in player2;
+	std::string Player2Name;
+
 	std::string code;
 };
 struct LobbyFourPlayers {
+	int index;
 	sockaddr_in player1;
+	std::string Player1Name;
+
 	sockaddr_in player2;
+	std::string Player2Name;
+
 	sockaddr_in player3;
+	std::string Player3Name;
+
 	sockaddr_in player4;
+	std::string Player4Name;
+
 	std::string code;
 };
 
@@ -32,8 +46,17 @@ private:
 	std::vector<LobbyTwoPlayers> ListLobbyTwoPlayers;
 	std::vector<LobbyFourPlayers> ListLobbyFourPlayers;
 
-	void CreateJson(int posBallx, int PosBally , int DirBallx , int DirBally);
+	std::string readJson;
+	std::string newJson;
+
+	rapidjson::Document doc;
+
+
+	int ballPosx, ballPosy, Dirx, Diry;
+
+	void CreateJson();
 	void ReadJson();
+
 public:
 	Serveur();
 	~Serveur();
@@ -44,9 +67,9 @@ public:
 	void AddList(sockaddr_in newclient);
 
 	std::string CreateLobby(sockaddr_in newclient);
-	void JoinLobby(sockaddr_in newclient, std::string message);
+	void JoinLobby(sockaddr_in newclient);
 
-	void Send(sockaddr_in client , const char* message );
+	void Send(sockaddr_in client , std::string message );
 	bool compare_addresses(const sockaddr_in& addr1, const sockaddr_in& addr2);
 	bool isNullSockaddr(const sockaddr_in& addr);
 };

@@ -60,25 +60,29 @@ int Serveur::Update()
 		std::cout << "Message reçu : " << buffer << "\n";
 
 		// Si le client envoie "exit", on arrête le serveur
+		ReadJson();
 
-		if (strcmp(buffer, "exit") == 0) {
-			std::cout << "Fermeture du serveur UDP...\n";
-			return 1;
+		if (doc.HasParseError()) {
+			std::cerr << "Erreur de parsing JSON !" << std::endl;
+			return;
 		}
-		else if (strcmp(buffer, "host") == 0) {
+
+		if (doc.HasMember("host") ) {
 			std::cout << "Open host\n";
 			std::string code = CreateLobby(baseclientadr);
 			sendto(udpSocket, code.c_str(), strlen(code.c_str()), 0, (sockaddr*)&clientAddr, clientAddrSize);
-			return 0;
+			return;
 		}
-		else if (strcmp(buffer, "Disconnect") == 0) {
+		else if (doc.HasMember("join") && doc["join"].IsObject()) {
+			std::cout << "join\n";
+			JoinLobby(baseclientadr);
+			return;
+		}
+		else if (doc.HasMember("Disconnect")) {
 			std::cout << "kill client...\n";
-			return 1;
+			RemoveClientFromList(baseclientadr);
+			return;
 		}
-		//else if (strcmp(buffer, "Join") == 0) {
-		//	const char* code = CreateLobby(baseclientadr);
-		//	sendto(udpSocket, code, strlen(code), 0, (sockaddr*)&clientAddr, clientAddrSize);
-		//}
 		else {
 			AddList(baseclientadr);
 			for (sockaddr_in client : clientAddr) {
@@ -87,6 +91,7 @@ int Serveur::Update()
 				}
 			}
 		}
+
 		// Répondre au client
 		const char* response = "Message recu !";
 		sendto(udpSocket, response, strlen(response), 0, (sockaddr*)&clientAddr, clientAddrSize);
@@ -102,7 +107,6 @@ void Serveur::RemoveClientFromList(sockaddr_in client)
 {
 	auto it = std::find_if(clientAddr.begin(), clientAddr.end(),
 		[&](const sockaddr_in& addr) { return compare_addresses(addr, client); });
-
 	if (it != clientAddr.end()) {
 		clientAddr.erase(it);  // Supprimer le client de la liste
 		std::cout << "Client supprimé de la liste.\n";
@@ -165,15 +169,43 @@ std::string Serveur::CreateLobby(sockaddr_in newclient)
 /// </summary>
 /// <param name="newclient"></param>
 /// <param name="message"></param>
-void Serveur::JoinLobby(sockaddr_in newclient, std::string message)
+void Serveur::JoinLobby(sockaddr_in newclient)
 {
 	//Base 
+	rapidjson::Document newDoc;
+	newDoc.Parse(readJson.c_str());
+	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
+	if (doc.HasParseError()) {
+		std::cerr << "Erreur de parsing JSON !" << std::endl;
+		return;
+	}
+
+	const rapidjson::Value& Code = doc["join"]; // Récupérer l'objet
 	for (LobbyTwoPlayers lobby : ListLobbyTwoPlayers) {
-		if (lobby.code == message) {
+		if (lobby.code == Code["code"].GetString()) {
 			if (isNullSockaddr(lobby.player2))
 				lobby.player2 = newclient;
+			else {
+				newDoc.AddMember("Full", 1, allocator);
+				rapidjson::StringBuffer buffer;
+				rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+				newDoc.Accept(writer);
+
+				std::string jsonString = buffer.GetString();
+				sendto(udpSocket, jsonString.c_str(), strlen(jsonString.c_str()), 0, (sockaddr*)&newclient, sizeof(newclient));
+				break;
+			}
 		}
 	}
+
+	newDoc.AddMember("NotFound", 1, allocator);
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	newDoc.Accept(writer);
+
+	std::string jsonString = buffer.GetString();
+	sendto(udpSocket, jsonString.c_str(), strlen(jsonString.c_str()), 0, (sockaddr*)&newclient, sizeof(newclient));
+
 	// make a system with code 
 }
 
@@ -184,13 +216,15 @@ void Serveur::JoinLobby(sockaddr_in newclient, std::string message)
 /// </summary>
 /// <param name="clientadr"></param>
 /// <param name="message"></param>
-void Serveur::Send(sockaddr_in clientadr, const char* message)
+void Serveur::Send(sockaddr_in clientadr, std::string message)
 {
 	std::cout << "Serveur Send" << std::endl;
+
+	CreateJson();
 	for (sockaddr_in client : clientAddr) {
 		if (!compare_addresses(client, clientadr)) {
 			int clientAddrSize = sizeof(client);
-			sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&client, clientAddrSize);
+			sendto(udpSocket, newJson.c_str(), strlen(newJson.c_str()), 0, (sockaddr*)&client, clientAddrSize);
 		}
 	}
 }
@@ -227,8 +261,29 @@ bool Serveur::isNullSockaddr(const sockaddr_in& addr) {
 /// <param name="PosBally"></param>
 /// <param name="DirBallx"></param>
 /// <param name="DirBally"></param>
-void Serveur::CreateJson(int posBallx, int PosBally, int DirBallx, int DirBally)
+void Serveur::CreateJson()
 {
+	doc.Parse(readJson.c_str());
+
+	if (doc.HasParseError()) {
+		std::cerr << "Erreur de parsing JSON !" << std::endl;
+		return;
+	}
+	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+	rapidjson::Value Ball(rapidjson::kObjectType);
+	Ball.AddMember("Posx", ballPosx, allocator);
+	Ball.AddMember("Posy", ballPosx, allocator);
+	Ball.AddMember("Dirx", Dirx, allocator);
+	Ball.AddMember("Diry", Diry, allocator);
+	doc.AddMember("Ball", Ball, allocator);
+
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	doc.Accept(writer);
+
+	std::string jsonString = buffer.GetString();
+
+	newJson = jsonString;
 }
 
 /// <summary>
@@ -236,5 +291,6 @@ void Serveur::CreateJson(int posBallx, int PosBally, int DirBallx, int DirBally)
 /// </summary>
 void Serveur::ReadJson()
 {
+	doc.Parse(readJson.c_str());
 
 }

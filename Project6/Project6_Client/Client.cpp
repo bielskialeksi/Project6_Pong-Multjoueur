@@ -69,6 +69,44 @@ void Client::Send()
 	//std::cout << "Client Send" << std::endl;
 	sendto(udpSocket, jsonToSend.c_str(), strlen(jsonToSend.c_str()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
+
+
+/// <summary>
+/// Host
+/// </summary>
+void Client::Host()
+{
+	doc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+	doc.AddMember("host", 0, allocator);
+
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	doc.Accept(writer);
+
+	sendto(udpSocket, buffer.GetString(), strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+}
+
+
+/// <summary>
+/// Join
+/// </summary>
+void Client::Join(std::string code)
+{
+	doc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+	rapidjson::Value Join(rapidjson::kObjectType);
+	Join.AddMember("code", code, allocator);
+	doc.AddMember("join", Join, allocator);
+
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	doc.Accept(writer);
+
+	sendto(udpSocket, buffer.GetString(), strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+}
+
+
 /// <summary>
 /// Send a package to serveur
 /// </summary>
@@ -92,7 +130,7 @@ void Client::Update(int posPadx, int posPady)
 		ReadJson();
 		jsonToRead.clear();
 	}
-	
+
 }
 
 /// <summary>
@@ -101,8 +139,14 @@ void Client::Update(int posPadx, int posPady)
 /// <returns></returns>
 int Client::Disconnect()
 {
-	const char* message = "Disconnect";
-	sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	doc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+	doc.AddMember("Disconnect", 0, allocator);
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	doc.Accept(writer);
+
+	sendto(udpSocket, buffer.GetString(), strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 	closesocket(udpSocket);
 	WSACleanup();
 	return 0;
@@ -115,7 +159,7 @@ int Client::Disconnect()
 /// <param name="PosPady"></param>
 void Client::CreateJson(int posPadx, int PosPady)
 {
-	rapidjson::Document doc;
+
 	doc.SetObject();
 	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 
@@ -138,46 +182,48 @@ void Client::CreateJson(int posPadx, int PosPady)
 /// </summary>
 void Client::ReadJson()
 {
-	rapidjson::Document doc;
 	doc.Parse(jsonToRead.c_str());
-
 	if (doc.HasParseError()) {
 		std::cerr << "Erreur de parsing JSON !" << std::endl;
 		return;
 	}
+	if (conected) {
+		//Read pos ADV
+		if (doc.HasMember("PlayerAdv") && doc["PlayerAdv"].IsObject()) {
+			const rapidjson::Value& playerAdv = doc["PlayerAdv"]; // Récupérer l'objet
 
-	//Read pos ADV
-	if (doc.HasMember("PlayerAdv") && doc["PlayerAdv"].IsObject()) {
-		const rapidjson::Value& playerAdv = doc["PlayerAdv"]; // Récupérer l'objet
-
-		// Vérifier si "Posx" et "Posy" existent
-		if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-			std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+			// Vérifier si "Posx" et "Posy" existent
+			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
+				std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+			}
+			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
+				std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+			}
 		}
-		if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-			std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+
+		//Read pos Ball 
+		if (doc.HasMember("Ball") && doc["Ball"].IsObject()) {
+			const rapidjson::Value& playerAdv = doc["Ball"]; // Récupérer l'objet
+
+			// Vérifier si "Posx" et "Posy" existent
+			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
+				std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+			}
+			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
+				std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+			}
+
+			// Vérifier si "Dirx" et "Diry" existent
+			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
+				std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+			}
+			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
+				std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+			}
 		}
 	}
-
-	//Read pos Ball 
-	if (doc.HasMember("Ball") && doc["Ball"].IsObject()) {
-		const rapidjson::Value& playerAdv = doc["Ball"]; // Récupérer l'objet
-
-		// Vérifier si "Posx" et "Posy" existent
-		if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-			std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
-		}
-		if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-			std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
-		}
-
-		// Vérifier si "Dirx" et "Diry" existent
-		if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-			std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
-		}
-		if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-			std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
-		}
+	else if (doc.HasMember("NotFound") || doc.HasMember("Full")) {
+		///
 	}
 
 }

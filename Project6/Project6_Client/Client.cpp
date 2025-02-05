@@ -159,14 +159,14 @@ int Client::Disconnect()
 /// <param name="PosPady"></param>
 void Client::CreateJson(int posPadx, int PosPady)
 {
-
-	doc.SetObject();
-	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+	rapidjson::Document newDoc;
+	newDoc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
 
 	rapidjson::Value playerAdv(rapidjson::kObjectType);
 	playerAdv.AddMember("Posx", posPadx, allocator);
 	playerAdv.AddMember("Posy", PosPady, allocator);
-	doc.AddMember("PlayerAdv", playerAdv, allocator);
+	newDoc.AddMember("PlayerAdv", playerAdv, allocator);
 
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);

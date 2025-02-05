@@ -75,6 +75,9 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
     case Menu::Menu_Join:
         JoinMenuDisplay(window);
         break;
+    case Menu::Menu_WaitingForOponent:
+        WaitingForOpponentDisplay(window);
+        break;
     default:
         break;
     }
@@ -121,6 +124,7 @@ void GameMenu::HostMenuEvents(sf::Event event)
         {
             std::cout << "Host" << std::endl;
             //Host
+            actualMenuIndex = Menu::Menu_WaitingForOponent;
         }
     }
 }
@@ -198,6 +202,14 @@ void GameMenu::JoinMenuDisplay(sf::RenderWindow* window)
     InitText(window, "Join", {20, 100});
 }
 
+void GameMenu::WaitingForOpponentDisplay(sf::RenderWindow* window)
+{
+    window->clear(sf::Color::Black);
+
+    InitText(window, "Waiting for Opponent...", { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2}, sf::Color::White, { 0.5f, 0.5f });
+    InitText(window, "Lobby ID : 44444", { WINDOW_WIDTH - 10, WINDOW_HEIGHT - 10 }, sf::Color::White, { 1.f, 1.f }, 18);
+}
+
 void GameMenu::InitRect(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, int id)
 {
     sf::RectangleShape rect;
@@ -212,9 +224,14 @@ void GameMenu::InitRect(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2
     window->draw(rect);
 }
 
-void GameMenu::InitText(sf::RenderWindow* window, std::string str, sf::Vector2f pos, sf::Color fillColor)
+void GameMenu::InitText(sf::RenderWindow* window, std::string str, sf::Vector2f pos, sf::Color fillColor, sf::Vector2f origin, int fontSize)
 {
     sf::Text text(str, font);
+
+    text.setCharacterSize(fontSize);
+
+    sf::Vector2f textSize = { text.getGlobalBounds().width, text.getGlobalBounds().height };
+    text.setOrigin({ textSize.x * origin.x, textSize.y * origin.y });
 
     text.setPosition(pos);
     text.setFillColor(fillColor);

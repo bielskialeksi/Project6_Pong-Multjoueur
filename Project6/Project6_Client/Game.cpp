@@ -87,6 +87,6 @@ void Game::CheckWin()
     {
         m_score.y += 1;
         //ball->MoveToPos(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-        std::cout << pos.x;
+        //std::cout << pos.x;
     }
 }

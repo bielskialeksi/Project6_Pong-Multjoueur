@@ -34,7 +34,24 @@ void Entity::Move(float x, float y)
 	m_shape.setPosition(m_pos);
 }
 
+void Entity::Reset()
+{
+	m_pos = {WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2};
+	m_shape.setPosition(m_pos);
+}
+
+
 const sf::RectangleShape Entity::GetShape()
 {
 	return m_shape;
+}
+
+void Entity::ChangeState(Movement state)
+{
+	m_moveState = state;
+}
+
+Entity::Movement Entity::GetState()
+{
+	return m_moveState;
 }

@@ -45,3 +45,13 @@ const sf::RectangleShape Entity::GetShape()
 {
 	return m_shape;
 }
+
+void Entity::ChangeState(Movement state)
+{
+	m_moveState = state;
+}
+
+Entity::Movement Entity::GetState()
+{
+	return m_moveState;
+}

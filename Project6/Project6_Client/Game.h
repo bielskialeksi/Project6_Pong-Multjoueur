@@ -8,6 +8,7 @@ public:
 	Game();
 	void Loop(sf::RenderWindow* window, Client* client);
 	void MoveBall();
+	void MoveRacket();
 	void CheckWin();
 
 private:
@@ -16,8 +17,9 @@ private:
 	Entity* racket_1;
 	Entity* racket_2;
 
-	float m_Ballx = 3.0f;
-	float m_Bally = 3.0f;
+	float m_Ballx = 2.0f;
+	float m_Bally = 2.0f;
+
 
 };
 

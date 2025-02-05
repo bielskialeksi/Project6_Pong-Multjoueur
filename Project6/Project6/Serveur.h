@@ -9,6 +9,12 @@
 #include <random>
 #include <string>
 
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+
+
+
 struct LobbyTwoPlayers {
 	int index;
 	sockaddr_in player1;
@@ -66,7 +72,7 @@ public:
 	int Stop();
 	void AddList(sockaddr_in newclient);
 
-	std::string CreateLobby(sockaddr_in newclient);
+	std::string CreateLobby(sockaddr_in newclient, std::string name);
 	void JoinLobby(sockaddr_in newclient);
 
 	void Send(sockaddr_in client , std::string message );

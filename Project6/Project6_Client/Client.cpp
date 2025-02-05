@@ -1,8 +1,5 @@
 ﻿#include "Client.h"
 
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
 /// <summary>
 /// Listen ifthe serveur send a message 
 /// </summary>
@@ -11,8 +8,8 @@ void Client::Listen()
 	char buffer[1024];
 	sockaddr_in senderAddr;
 	int senderLen = sizeof(senderAddr);
+	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&senderAddr, (socklen_t*)&senderLen);
 
-	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer), 0, (sockaddr*)&senderAddr, &senderLen);
 	if (bytesReceived > 0) {
 		buffer[bytesReceived] = '\0';
 		std::cout << " Message : " << buffer << std::endl;
@@ -51,8 +48,8 @@ int Client::Connect()
 	serverAddr.sin_port = htons(50500);  // ⚠️ On utilise 50500
 	inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);  // Adresse du serveur
 
-	const char* message = "Hello, serveur UDP!";
-	sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	//const char* message = "Hello, serveur UDP!";
+	//sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 
 	std::cout << "Message envoyé au serveur UDP.\n";
 
@@ -74,15 +71,18 @@ void Client::Send()
 /// <summary>
 /// Host
 /// </summary>
-void Client::Host()
+void Client::Host(std::string name)
 {
-	doc.SetObject();
-	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
-	doc.AddMember("host", 0, allocator);
-
+	rapidjson::Document newDoc;
+	newDoc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
+	newDoc.AddMember("host", 0, allocator);
+	rapidjson::Value Name;
+	Name.SetString(name.c_str(), allocator);
+	newDoc.AddMember("name", Name, allocator);
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-	doc.Accept(writer);
+	newDoc.Accept(writer);
 
 	sendto(udpSocket, buffer.GetString(), strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
@@ -91,12 +91,16 @@ void Client::Host()
 /// <summary>
 /// Join
 /// </summary>
-void Client::Join(std::string code)
+void Client::Join(std::string name,std::string code)
 {
 	doc.SetObject();
 	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 	rapidjson::Value Join(rapidjson::kObjectType);
-	Join.AddMember("code", code, allocator);
+
+	rapidjson::Value codeValue;
+	codeValue.SetString(code.c_str(), allocator);
+	Join.AddMember("code", codeValue, allocator);
+
 	doc.AddMember("join", Join, allocator);
 
 	rapidjson::StringBuffer buffer;
@@ -107,14 +111,7 @@ void Client::Join(std::string code)
 }
 
 
-/// <summary>
-/// Send a package to serveur
-/// </summary>
-void Client::Send(std::string message)
-{
-	//std::cout << "Client Send" << std::endl;
-	sendto(udpSocket, message.c_str(), strlen(message.c_str()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
-}
+
 
 /// <summary>
 /// Listen the serveur and create next package and send to serveur;
@@ -122,8 +119,11 @@ void Client::Send(std::string message)
 void Client::Update(int posPadx, int posPady)
 {
 	CreateJson(posPadx, posPady);
-	if (!listening) {  // Vérifie si un thread est déjà lancé
+	if (!listening) {
 		listening = true;
+		if (listenerThread.joinable()) {
+			listenerThread.join();  // On termine l'ancien thread avant d'en créer un nouveau
+		}
 		listenerThread = std::thread(&Client::Listen, this);
 	}
 	if (jsonToRead != "") {
@@ -170,7 +170,7 @@ void Client::CreateJson(int posPadx, int PosPady)
 
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-	doc.Accept(writer);
+	newDoc.Accept(writer);
 
 	std::string jsonString = buffer.GetString();
 
@@ -214,11 +214,11 @@ void Client::ReadJson()
 			}
 
 			// Vérifier si "Dirx" et "Diry" existent
-			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-				std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+			if (playerAdv.HasMember("Dirx") && playerAdv["Dirx"].IsInt()) {
+				std::cout << "Dirx : " << playerAdv["Dirx"].GetInt() << std::endl;
 			}
-			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-				std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+			if (playerAdv.HasMember("Diry") && playerAdv["Diry"].IsInt()) {
+				std::cout << "Diry : " << playerAdv["Diry"].GetInt() << std::endl;
 			}
 		}
 	}

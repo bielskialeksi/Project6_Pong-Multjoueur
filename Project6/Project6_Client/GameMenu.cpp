@@ -54,10 +54,10 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
             MainMenuEvents(event);
             break;
         case Menu::Menu_Host :
-            HostMenuEvents(event);
+            HostMenuEvents(event, client);
             break;
         case Menu::Menu_Join :
-            JoinMenuEvents(event);
+            JoinMenuEvents(event, client);
             break;
         default :
             break;
@@ -100,7 +100,7 @@ void GameMenu::MainMenuEvents(sf::Event event)
     }
 }
 
-void GameMenu::HostMenuEvents(sf::Event event)
+void GameMenu::HostMenuEvents(sf::Event event, Client* client)
 {
     if (selectedButtonIndex == HostMenu::HostMenu_PseudoField)
     {
@@ -120,12 +120,12 @@ void GameMenu::HostMenuEvents(sf::Event event)
         if (selectedButtonIndex == HostMenu::HostMenu_HostBtn && pseudo.size() > 0)
         {
             //Host
-            client->Send("host");
+            client->Host(pseudo);
         }
     }
 }
 
-void GameMenu::JoinMenuEvents(sf::Event event)
+void GameMenu::JoinMenuEvents(sf::Event event, Client* client)
 {
     if (selectedButtonIndex == JoinMenu::JoinMenu_PseudoField)
     {
@@ -158,7 +158,7 @@ void GameMenu::JoinMenuEvents(sf::Event event)
         if (selectedButtonIndex == JoinMenu::JoinMenu_JoinBtn && pseudo.size() > 0)
         {
             std::cout << "Join" << std::endl;
-            // Join
+            client->Join(pseudo, lobbyCode);
         }
     }
 }

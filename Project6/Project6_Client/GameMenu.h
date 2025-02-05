@@ -66,8 +66,8 @@ public:
 	void Loop(sf::RenderWindow* window, Client* client);
 
 	void MainMenuEvents(sf::Event event);
-	void HostMenuEvents(sf::Event event);
-	void JoinMenuEvents(sf::Event event);
+	void HostMenuEvents(sf::Event event, Client* client);
+	void JoinMenuEvents(sf::Event event, Client* client);
 
 	void MainMenuDisplay(sf::RenderWindow* window);
 	void HostMenuDisplay(sf::RenderWindow* window);

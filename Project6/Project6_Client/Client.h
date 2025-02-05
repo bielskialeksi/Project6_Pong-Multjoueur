@@ -6,6 +6,11 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+
 class Client
 {
 private:
@@ -37,10 +42,9 @@ public:
 	int Connect();
 	void Send();
 	
-	void Host();
-	void Join(std::string code);
+	void Host(std::string name);
+	void Join(std::string name,std::string code);
 
-	void Send(std::string message);
 	void Update(int posPadx, int PosPady);
 	int Disconnect();
 

@@ -6,6 +6,8 @@ enum Menu {
 	Menu_Host,
 	Menu_Join,
 
+	Menu_WaitingForOponent,
+
 	Menu_Count
 };
 
@@ -35,7 +37,7 @@ enum JoinMenu {
 class GameMenu
 {
 private:
-	std::string fontFilename = "arial.ttf";
+	std::string fontFilename = "Gameplay.ttf";
 	std::string textureFilename = "metal_texture.jpg";
 
 	std::string pseudo;
@@ -72,8 +74,9 @@ public:
 	void MainMenuDisplay(sf::RenderWindow* window);
 	void HostMenuDisplay(sf::RenderWindow* window);
 	void JoinMenuDisplay(sf::RenderWindow* window);
+	void WaitingForOpponentDisplay(sf::RenderWindow* window);
 
 	void InitRect(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, int id);
-	void InitText(sf::RenderWindow* window, std::string str, sf::Vector2f pos, sf::Color fillColor = sf::Color::Black);
+	void InitText(sf::RenderWindow* window, std::string str, sf::Vector2f pos, sf::Color fillColor = sf::Color::Black, sf::Vector2f origin = { 0, 0 }, int fontSize = 30);
 };
 

@@ -64,7 +64,7 @@ int Client::Connect()
 void Client::Send()
 {
 	//std::cout << "Client Send" << std::endl;
-	sendto(udpSocket, jsonToSend.c_str(), strlen(jsonToSend.c_str()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	sendto(udpSocket, jsonToSend.c_str(), (int)strlen(jsonToSend.c_str()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 
 
@@ -84,7 +84,7 @@ void Client::Host(std::string name)
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	newDoc.Accept(writer);
 
-	sendto(udpSocket, buffer.GetString(), strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 
 
@@ -101,13 +101,17 @@ void Client::Join(std::string name,std::string code)
 	codeValue.SetString(code.c_str(), allocator);
 	Join.AddMember("code", codeValue, allocator);
 
+	rapidjson::Value nameValue;
+	nameValue.SetString(code.c_str(), allocator);
+	Join.AddMember("name", nameValue, allocator);
+
 	doc.AddMember("join", Join, allocator);
 
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	doc.Accept(writer);
 
-	sendto(udpSocket, buffer.GetString(), strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 
 
@@ -146,7 +150,7 @@ int Client::Disconnect()
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	doc.Accept(writer);
 
-	sendto(udpSocket, buffer.GetString(), strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 	closesocket(udpSocket);
 	WSACleanup();
 	return 0;

@@ -89,7 +89,7 @@ int Serveur::Update()
 
 		// Répondre au client
 		const char* response = "Message recu !";
-		sendto(udpSocket, response, strlen(response), 0, (sockaddr*)&clientAddr, clientAddrSize);
+		sendto(udpSocket, response, (int)strlen(response), 0, (sockaddr*)&clientAddr, clientAddrSize);
 	}
 	return 0;
 }
@@ -174,7 +174,7 @@ std::string Serveur::CreateLobby(sockaddr_in newclient, std::string name)
 	std::cout << jsonString << std::endl;
 
 
-	sendto(udpSocket, jsonString.c_str(), jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
+	sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
 	std::cout << "Open host\n" << "code:" << newLobby.code << std::endl;
 
 	return newLobby.code;
@@ -217,6 +217,7 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 	}
 
 	std::string lobbyCode = Code["code"].GetString();  // Récupérer le code du lobby
+	std::string namePlayer = Code["name"].GetString();  // Récupérer le name
 
 
 	// Recherche du lobby correspondant au code
@@ -229,12 +230,13 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 			if (isNullSockaddr(lobby.player2)) {
 				// Si un joueur rejoint, remplir les informations et envoyer une réponse
 				lobby.player2 = newclient;
+				lobby.Player2Name = namePlayer;
 				newDoc.AddMember("HasJoin", 0, allocator);
 				rapidjson::StringBuffer buffer;
 				rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 				newDoc.Accept(writer);
 				std::string jsonString = buffer.GetString();
-				sendto(udpSocket, jsonString.c_str(), jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
+				sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
 				break;
 			}
 			else {
@@ -244,7 +246,7 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 				rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 				newDoc.Accept(writer);
 				std::string jsonString = buffer.GetString();
-				sendto(udpSocket, jsonString.c_str(), jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
+				sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
 				break;
 			}
 		}
@@ -260,7 +262,7 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 		rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 		newDoc.Accept(writer);
 		std::string jsonString = buffer.GetString();
-		sendto(udpSocket, jsonString.c_str(), jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
+		sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
 	}
 }
 
@@ -280,7 +282,7 @@ void Serveur::Send(sockaddr_in clientadr, std::string message)
 	for (sockaddr_in client : clientAddr) {
 		if (!compare_addresses(client, clientadr)) {
 			int clientAddrSize = sizeof(client);
-			sendto(udpSocket, newJson.c_str(), strlen(newJson.c_str()), 0, (sockaddr*)&client, clientAddrSize);
+			sendto(udpSocket, newJson.c_str(), (int)strlen(newJson.c_str()), 0, (sockaddr*)&client, clientAddrSize);
 		}
 	}
 }

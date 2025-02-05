@@ -225,5 +225,7 @@ void Client::ReadJson()
 	else if (doc.HasMember("NotFound") || doc.HasMember("Full")) {
 		/// 
 	}
-
+	else if (doc.HasMember("Hasjoin")) {
+		conected = true;
+	}
 }

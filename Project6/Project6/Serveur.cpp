@@ -183,8 +183,16 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 	const rapidjson::Value& Code = doc["join"]; // Récupérer l'objet
 	for (LobbyTwoPlayers lobby : ListLobbyTwoPlayers) {
 		if (lobby.code == Code["code"].GetString()) {
-			if (isNullSockaddr(lobby.player2))
+			if (isNullSockaddr(lobby.player2)) {
 				lobby.player2 = newclient;
+				newDoc.AddMember("HasJoin", 0, allocator);
+				rapidjson::StringBuffer buffer;
+				rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+				newDoc.Accept(writer);
+				std::string jsonString = buffer.GetString();
+				sendto(udpSocket, jsonString.c_str(), strlen(jsonString.c_str()), 0, (sockaddr*)&newclient, sizeof(newclient));
+				break;
+			}
 			else {
 				newDoc.AddMember("Full", 1, allocator);
 				rapidjson::StringBuffer buffer;

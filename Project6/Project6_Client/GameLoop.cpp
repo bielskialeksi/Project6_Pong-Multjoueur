@@ -14,7 +14,7 @@ GameLoop::GameLoop()
 
 void GameLoop::Init()
 {
-    window = new sf::RenderWindow(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "SFML depuis dossier projet !");
+    window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML depuis dossier projet !");
 }
 
 void GameLoop::Loop()

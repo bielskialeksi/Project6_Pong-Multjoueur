@@ -39,10 +39,8 @@ private:
 	std::string textureFilename = "metal_texture.jpg";
 
 	std::string pseudo;
-	sf::Text printedPseudo;
 	
 	std::string lobbyCode;
-	sf::Text printedLobbyCode;
 
 	sf::Font font;
 	sf::Texture texture;
@@ -74,5 +72,8 @@ public:
 	void MainMenuDisplay(sf::RenderWindow* window);
 	void HostMenuDisplay(sf::RenderWindow* window);
 	void JoinMenuDisplay(sf::RenderWindow* window);
+
+	void InitRect(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, int id);
+	void InitText(sf::RenderWindow* window, std::string str, sf::Vector2f pos, sf::Color fillColor = sf::Color::Black);
 };
 

@@ -2,7 +2,6 @@
 class GameLoop
 {
 private:
-	bool isPlaying = true;
 public:
 	GameLoop();
 
@@ -10,5 +9,7 @@ public:
 	void Loop();
 
 	sf::RenderWindow* window;
+	
+	bool isPlaying = false;
 };
 

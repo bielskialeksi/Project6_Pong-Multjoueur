@@ -3,6 +3,7 @@
 #include "GameLoop.h"
 #include "Game.h"
 #include "GameMenu.h"
+#include "Global.h"
 
 #include "Client.h"
 GameLoop::GameLoop()
@@ -13,7 +14,7 @@ GameLoop::GameLoop()
 
 void GameLoop::Init()
 {
-    window = new sf::RenderWindow(sf::VideoMode(800, 600), "SFML depuis dossier projet !");
+    window = new sf::RenderWindow(sf::VideoMode(WINDOW_HEIGHT, WINDOW_WIDTH), "SFML depuis dossier projet !");
 }
 
 void GameLoop::Loop()
@@ -21,12 +22,12 @@ void GameLoop::Loop()
     Client client;
     client.Connect();
     GameMenu menu;
-    
+    Game game;
 
     while (window->isOpen()) {
         if (isPlaying) {
 
-            //Game();
+            game.Loop(window, &client);
         }
         else
             menu.Loop(window, &client);

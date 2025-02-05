@@ -65,8 +65,7 @@ int Serveur::Update()
 
 		if (doc.HasMember("host") ) {
 			std::string code = CreateLobby(baseclientadr , doc["name"].GetString());
-			sendto(udpSocket, code.c_str(), strlen(code.c_str()), 0, (sockaddr*)&clientAddr, clientAddrSize);
-			std::cout << "Open host\n" << "code:" << code<<std::endl;
+
 			return 0;
 		}
 		else if (doc.HasMember("join") && doc["join"].IsObject()) {
@@ -158,6 +157,26 @@ std::string Serveur::CreateLobby(sockaddr_in newclient, std::string name)
 	std::uniform_int_distribution<> distrib(10000, 99999);
 	newLobby.code = std::to_string(distrib(gen));
 	ListLobbyTwoPlayers.push_back(newLobby);
+
+
+
+
+	rapidjson::Document newDoc;
+	newDoc.SetObject(); // Réinitialiser l'objet
+	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
+	newDoc.AddMember("Code", rapidjson::Value(newLobby.code.c_str(), allocator), allocator); // Ajouter le membre
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	newDoc.Accept(writer);
+	std::string jsonString = buffer.GetString();
+
+
+	std::cout << jsonString << std::endl;
+
+
+	sendto(udpSocket, jsonString.c_str(), jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
+	std::cout << "Open host\n" << "code:" << newLobby.code << std::endl;
+
 	return newLobby.code;
 }
 
@@ -198,6 +217,7 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 	}
 
 	std::string lobbyCode = Code["code"].GetString();  // Récupérer le code du lobby
+
 
 	// Recherche du lobby correspondant au code
 	bool foundLobby = false;  // Flag pour savoir si un lobby a été trouvé

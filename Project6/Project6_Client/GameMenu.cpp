@@ -76,7 +76,7 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
         JoinMenuDisplay(window);
         break;
     case Menu::Menu_WaitingForOponent:
-        WaitingForOpponentDisplay(window);
+        WaitingForOpponentDisplay(window, client);
         break;
     default:
         break;
@@ -202,12 +202,12 @@ void GameMenu::JoinMenuDisplay(sf::RenderWindow* window)
     InitText(window, "Join", {20, 100});
 }
 
-void GameMenu::WaitingForOpponentDisplay(sf::RenderWindow* window)
+void GameMenu::WaitingForOpponentDisplay(sf::RenderWindow* window, Client* client)
 {
     window->clear(sf::Color::Black);
 
     InitText(window, "Waiting for Opponent...", { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2}, sf::Color::White, { 0.5f, 0.5f });
-    InitText(window, "Lobby ID : 44444", { WINDOW_WIDTH - 10, WINDOW_HEIGHT - 10 }, sf::Color::White, { 1.f, 1.f }, 18);
+    InitText(window, "Lobby ID: " + client->GetCodeClient(), {WINDOW_WIDTH - 10, WINDOW_HEIGHT - 10}, sf::Color::White, {1.f, 1.f}, 18);
 }
 
 void GameMenu::InitRect(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, int id)

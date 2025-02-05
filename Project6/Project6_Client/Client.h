@@ -24,6 +24,8 @@ private:
 	std::thread listenerThread;
 	bool listening = false;
 
+	std::string clientCode;
+
 	rapidjson::Document doc;
 
 	int PosPadAdvx;
@@ -48,5 +50,6 @@ public:
 	void Update(int posPadx, int PosPady);
 	int Disconnect();
 
+	std::string GetCodeClient();
 };
 

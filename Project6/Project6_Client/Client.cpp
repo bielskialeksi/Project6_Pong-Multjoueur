@@ -15,7 +15,7 @@ void Client::Listen()
 		std::cout << " Message : " << buffer << std::endl;
 		jsonToRead = buffer;
 	}
-
+	listening = false;
 }
 
 Client::Client()
@@ -118,7 +118,6 @@ void Client::Join(std::string name,std::string code)
 /// </summary>
 void Client::Update(int posPadx, int posPady)
 {
-	CreateJson(posPadx, posPady);
 	if (!listening) {
 		listening = true;
 		if (listenerThread.joinable()) {
@@ -130,6 +129,7 @@ void Client::Update(int posPadx, int posPady)
 		ReadJson();
 		jsonToRead.clear();
 	}
+	CreateJson(posPadx, posPady);
 
 }
 
@@ -150,6 +150,11 @@ int Client::Disconnect()
 	closesocket(udpSocket);
 	WSACleanup();
 	return 0;
+}
+
+std::string Client::GetCodeClient()
+{
+	return clientCode;
 }
 
 /// <summary>
@@ -182,6 +187,7 @@ void Client::CreateJson(int posPadx, int PosPady)
 /// </summary>
 void Client::ReadJson()
 {
+	std::cout << jsonToRead << std::endl;
 	doc.Parse(jsonToRead.c_str());
 	if (doc.HasParseError()) {
 		std::cerr << "Erreur de parsing JSON !" << std::endl;
@@ -203,22 +209,22 @@ void Client::ReadJson()
 
 		//Read pos Ball 
 		if (doc.HasMember("Ball") && doc["Ball"].IsObject()) {
-			const rapidjson::Value& playerAdv = doc["Ball"]; // Récupérer l'objet
+			const rapidjson::Value& Ball = doc["Ball"]; // Récupérer l'objet
 
 			// Vérifier si "Posx" et "Posy" existent
-			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-				std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+			if (Ball.HasMember("Posx") && Ball["Posx"].IsInt()) {
+				std::cout << "Posx : " << Ball["Posx"].GetInt() << std::endl;
 			}
-			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-				std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+			if (Ball.HasMember("Posy") && Ball["Posy"].IsInt()) {
+				std::cout << "Posy : " << Ball["Posy"].GetInt() << std::endl;
 			}
 
 			// Vérifier si "Dirx" et "Diry" existent
-			if (playerAdv.HasMember("Dirx") && playerAdv["Dirx"].IsInt()) {
-				std::cout << "Dirx : " << playerAdv["Dirx"].GetInt() << std::endl;
+			if (Ball.HasMember("Dirx") && Ball["Dirx"].IsInt()) {
+				std::cout << "Dirx : " << Ball["Dirx"].GetInt() << std::endl;
 			}
-			if (playerAdv.HasMember("Diry") && playerAdv["Diry"].IsInt()) {
-				std::cout << "Diry : " << playerAdv["Diry"].GetInt() << std::endl;
+			if (Ball.HasMember("Diry") && Ball["Diry"].IsInt()) {
+				std::cout << "Diry : " << Ball["Diry"].GetInt() << std::endl;
 			}
 		}
 	}
@@ -227,5 +233,9 @@ void Client::ReadJson()
 	}
 	else if (doc.HasMember("Hasjoin")) {
 		conected = true;
+	}
+	else if (doc.HasMember("Code")) {
+		clientCode = doc["Code"].GetString();
+		std::cout << "get code\n";
 	}
 }

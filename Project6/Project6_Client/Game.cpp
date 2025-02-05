@@ -102,14 +102,14 @@ void Game::MoveRacket()
     sf::Vector2f scale = racket_1->GetShape().getSize();
     if (racket_1->GetState() == Entity::Movement::Up && pos.y - RACKET_VELOCITY >= 0)
         racket_1->Move(0, -RACKET_VELOCITY);
-    if (racket_1->GetState() == Entity::Movement::Down && pos.y + RACKET_VELOCITY <= WINDOW_WIDTH - scale.y)
+    if (racket_1->GetState() == Entity::Movement::Down && pos.y + RACKET_VELOCITY <= WINDOW_WIDTH - scale.y *3)
         racket_1->Move(0, RACKET_VELOCITY);
 
     pos = racket_2->GetShape().getPosition();
     scale = racket_2->GetShape().getSize();
     if (racket_2->GetState() == Entity::Movement::Up && pos.y - RACKET_VELOCITY >= 0)
         racket_2->Move(0, -RACKET_VELOCITY);
-    if (racket_2->GetState() == Entity::Movement::Down && pos.y + RACKET_VELOCITY <= WINDOW_WIDTH - scale.y)
+    if (racket_2->GetState() == Entity::Movement::Down && pos.y + RACKET_VELOCITY <= WINDOW_WIDTH - scale.y *3)
         racket_2->Move(0, RACKET_VELOCITY);
 }
 

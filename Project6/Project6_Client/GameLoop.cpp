@@ -2,6 +2,7 @@
 
 #include "GameLoop.h"
 #include "GameMenu.h"
+#include "PongLoop.h"
 #include "Global.h"
 
 #include "Client.h"
@@ -22,10 +23,11 @@ void GameLoop::Loop()
     Client client;
     client.Connect();
     GameMenu menu;
+    PongLoop pong;
 
     while (window->isOpen()) {
         if (isPlaying) {
-
+            pong.Loop(window, &client);
         }
         else
             menu.Loop(window, &client);

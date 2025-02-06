@@ -135,7 +135,6 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="main.cpp" />
@@ -143,7 +142,6 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="Entity.h" />
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="Global.h" />

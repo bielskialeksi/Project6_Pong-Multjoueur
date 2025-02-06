@@ -1,0 +1,13 @@
+#pragma once
+
+#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 800
+
+#define FIELD_SIZE { WINDOW_WIDTH / 4, WINDOW_HEIGHT / 20 }
+#define BUTTON_SIZE { WINDOW_WIDTH / 8, WINDOW_HEIGHT / 10 }
+
+#define BUTTON_HOVER_COLOR { 255, 255, 120 }
+
+#define RACKET_VELOCITY 10.f
+#define BALL_DEFAULT_SPEED 2.f
+#define BALL_SPEED_UP 1.f

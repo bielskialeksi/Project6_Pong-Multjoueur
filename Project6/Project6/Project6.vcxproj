@@ -130,10 +130,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Project6_Client\Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Serveur.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Project6_Client\Game.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="Serveur.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

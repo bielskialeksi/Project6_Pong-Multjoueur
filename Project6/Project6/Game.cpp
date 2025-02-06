@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Global.h"
+#include "Vector2f.h"
 
 Game::Game()
 {

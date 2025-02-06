@@ -3,7 +3,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>  // Nécessaire pour inet_pton()
 #include <thread>
-
+#include <string>
 #pragma comment(lib, "ws2_32.lib")
 
 
@@ -27,18 +27,23 @@ private:
 	std::string clientCode;
 
 	rapidjson::Document doc;
+	void Listen();
+	void CreateJson(int posPadx, int PosPady);
+	void ReadJson();
 
-	int PosPadAdvx;
-	int PosPadAdvy;
+public:
+
+
+
+	int PosPLayer1x;
+	int PosPLayer1y;
+	int PosPLayer1x;
+	int PosPLayer1y;
 	int PosBallx;
 	int PosBally;
 	int DirBallx;
 	int DirBally;
 
-	void Listen();
-	void CreateJson(int posPadx, int PosPady);
-	void ReadJson();
-public:
 	Client();
 	~Client();
 	int Connect();
@@ -49,6 +54,9 @@ public:
 
 	void Update(int posPadx, int PosPady);
 	int Disconnect();
+
+
+
 
 	std::string GetCodeClient();
 };

@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 
 #include "GameLoop.h"
-#include "Game.h"
 #include "GameMenu.h"
 #include "Global.h"
 
@@ -23,12 +22,10 @@ void GameLoop::Loop()
     Client client;
     client.Connect();
     GameMenu menu;
-    Game game;
 
     while (window->isOpen()) {
         if (isPlaying) {
 
-            game.Loop(window, &client);
         }
         else
             menu.Loop(window, &client);

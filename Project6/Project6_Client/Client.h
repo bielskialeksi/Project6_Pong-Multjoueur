@@ -27,7 +27,11 @@ private:
 	std::string clientCode;
 
 	rapidjson::Document doc;
+	void Listen();
+	void CreateJson(int posPadx, int PosPady);
+	void ReadJson();
 
+public:
 	int PosPadAdvx;
 	int PosPadAdvy;
 	int PosBallx;
@@ -35,10 +39,6 @@ private:
 	int DirBallx;
 	int DirBally;
 
-	void Listen();
-	void CreateJson(int posPadx, int PosPady);
-	void ReadJson();
-public:
 	Client();
 	~Client();
 	int Connect();
@@ -49,6 +49,9 @@ public:
 
 	void Update(int posPadx, int PosPady);
 	int Disconnect();
+
+
+
 
 	std::string GetCodeClient();
 };

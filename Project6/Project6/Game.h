@@ -1,18 +1,17 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include "Client.h"
 #include "Entity.h"
 class Game
 {
 public:
 	Game();
-	void Loop(sf::RenderWindow* window, Client* client);
+	void Loop();
 	void MoveBall();											
 	void MoveRacket();
 	void CheckWin();
 
 private:
-	sf::Vector2i m_score;						//x = score player 1 / y = score player 2
+	
+	Vector2f m_score;							//x = score player 1 / y = score player 2
 	Entity* ball;								//ball principal
 	Entity* racket_1;							//raquette player 1
 	Entity* racket_2;							//raquette player 2

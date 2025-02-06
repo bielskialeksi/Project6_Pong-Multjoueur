@@ -11,3 +11,7 @@
 #define RACKET_VELOCITY 10.f
 #define BALL_DEFAULT_SPEED 2.f
 #define BALL_SPEED_UP 1.f
+
+#define SCALE_RACKETX 30.f
+#define SCALE_RACKETY 100.f
+#define BASIC_SCALE 50.f

@@ -3,7 +3,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>  // Nécessaire pour inet_pton()
 #include <thread>
-
+#include <string>
 #pragma comment(lib, "ws2_32.lib")
 
 
@@ -32,8 +32,13 @@ private:
 	void ReadJson();
 
 public:
-	int PosPadAdvx;
-	int PosPadAdvy;
+
+
+
+	int PosPLayer1x;
+	int PosPLayer1y;
+	int PosPLayer1x;
+	int PosPLayer1y;
 	int PosBallx;
 	int PosBally;
 	int DirBallx;

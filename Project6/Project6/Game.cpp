@@ -4,82 +4,103 @@
 
 Game::Game()
 {
-    ball = new Entity();
-    racket_1 = new Entity(50,200,30,100);
-    racket_2 = new Entity(WINDOW_WIDTH - 80, 200, 30, 100);
+	m_BallVelocityX = BALL_DEFAULT_SPEED;
+	m_BallyVelocityY = BALL_DEFAULT_SPEED;
 
-    m_BallVelocityX = BALL_DEFAULT_SPEED;
-    m_BallyVelocityY = BALL_DEFAULT_SPEED;
+	resetBall = Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+	ball = resetBall;
+	ballScale = Vector2f(50, 50);
 
+	racket_1 = Vector2f(50, 200);
+	racket_2 = Vector2f(WINDOW_WIDTH - 80, 200);
+
+	scaleRacket = Vector2f(30, 100);
 }
 
 void Game::Loop()               //Boucle de jeu
 {
-    MoveBall();
-    MoveRacket();
+	MoveBall();
+}
 
+void Game::MovePlayer(int playerNum, bool MoveUp)
+{
+	switch (playerNum)
+	{
+	case 0:
+		if (MoveUp && racket_1.y > 0) {
+			racket_1.y = racket_1.y - RACKET_VELOCITY;
+		}
+		else if (racket_1.y < WINDOW_HEIGHT) {
+			racket_1.y = racket_1.y - RACKET_VELOCITY;
+		}
+		break;
+	case 1:
+		if (MoveUp && racket_2.y > 0) {
+			racket_2.y = racket_2.y - RACKET_VELOCITY;
+		}
+		else if (racket_2.y < WINDOW_HEIGHT) {
+			racket_2.y = racket_2.y - RACKET_VELOCITY;
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Game::MoveBall()           //deplace la balle en x & y
 {
-    Vector2f pos = ball->GetShape().getPosition();
-    Vector2f scale = ball->GetShape().getSize();
+	Vector2f pos = ball;
+	Vector2f scale = ballScale;
 
-    if (ball->GetShape().getGlobalBounds().intersects(racket_1->GetShape().getGlobalBounds()) || ball->GetShape().getGlobalBounds().intersects(racket_2->GetShape().getGlobalBounds()))     //Collision avec les raquettes
-    {
-        m_BallVelocityX > 0 ? m_BallVelocityX += BALL_SPEED_UP : m_BallVelocityX -= BALL_SPEED_UP;              //Augmente la vitesse de la balle en x
-        m_BallyVelocityY > 0 ? m_BallyVelocityY += BALL_SPEED_UP / 2 : m_BallyVelocityY -= BALL_SPEED_UP / 2;      //Augmente la vitesse de la balle en y
-        m_BallVelocityX *= -1;                                                                  //Change la direction de la balle en x
-    }   
+	if (m_BallVelocityX > 0) {
+		if (ball.x > racket_2.x - scaleRacket.x) {
+			if (ball.y< racket_2.y + (scaleRacket.y / 2) && ball.y > racket_2.y - (scaleRacket.y / 2)) {
+				m_BallVelocityX += BALL_SPEED_UP;
+				m_BallyVelocityY += BALL_SPEED_UP / 2;
+				m_BallVelocityX *= -1;
+			}
+		}
+	}
+	else {
+		if (ball.x < racket_1.x + scaleRacket.x) {
+			if (ball.y< racket_1.y + (scaleRacket.y / 2) && ball.y > racket_1.y - (scaleRacket.y / 2)) {
+				m_BallVelocityX -= BALL_SPEED_UP;
+				m_BallyVelocityY -= BALL_SPEED_UP / 2;
+				m_BallVelocityX *= -1;
+			}
+		}
+	}
+	if (pos.y + m_BallyVelocityY < 0 || pos.y + m_BallyVelocityY > WINDOW_HEIGHT - scale.y)
+		m_BallyVelocityY *= -1;                                                                  //Change la direction de la balle en y
 
-    if (pos.y + m_BallyVelocityY < 0 || pos.y + m_BallyVelocityY > WINDOW_HEIGHT - scale.y)
-        m_BallyVelocityY *= -1;                                                                  //Change la direction de la balle en y
-
-    ball->Move(m_BallVelocityX, m_BallyVelocityY);
-    CheckWin();
+	ball = ball + Vector2f(m_BallVelocityX, m_BallyVelocityY);
+	CheckWin();
 }
 
-void Game::MoveRacket()                                                                 //Deplace les raquettes en fonction de leurs states + sans depasser l'écran
-{
-    //raquette player 1
-    Vector2f pos = racket_1->GetShape().getPosition();
-    Vector2f scale = racket_1->GetShape().getSize();
-    if (racket_1->GetState() == Entity::Movement::Up && pos.y - RACKET_VELOCITY >= 0)
-        racket_1->Move(0, -RACKET_VELOCITY);
-    if (racket_1->GetState() == Entity::Movement::Down && pos.y + RACKET_VELOCITY <= WINDOW_WIDTH - scale.y *3)
-        racket_1->Move(0, RACKET_VELOCITY);
-
-    //raquette player 2
-    pos = racket_2->GetShape().getPosition();
-    scale = racket_2->GetShape().getSize();
-    if (racket_2->GetState() == Entity::Movement::Up && pos.y - RACKET_VELOCITY >= 0)
-        racket_2->Move(0, -RACKET_VELOCITY);
-    if (racket_2->GetState() == Entity::Movement::Down && pos.y + RACKET_VELOCITY <= WINDOW_WIDTH - scale.y *3)
-        racket_2->Move(0, RACKET_VELOCITY);
-}
 
 void Game::CheckWin()                                                                   //Teste si la balle va sortir des écran latérale. Si positif : +1 au score du gagnant & reset la pos et vitesse de la balle
 {
-    Vector2f pos = ball->GetShape().getPosition();
-    Vector2f scale = ball->GetShape().getSize();
+	Vector2f pos = ball;
+	Vector2f scale = ballScale;
 
-    //ecran droit = victoire player 1
-    if (pos.x + m_BallVelocityX > WINDOW_WIDTH - scale.x)
-    {
-        m_score.x += 1;
-        ball->Reset();
-        m_BallVelocityX = BALL_DEFAULT_SPEED;
-        m_BallyVelocityY = BALL_DEFAULT_SPEED;
-        m_BallVelocityX *= -1;
-    }
+	//ecran droit = victoire player 1
+	if (pos.x + m_BallVelocityX > WINDOW_WIDTH - scale.x)
+	{
+		m_score.x += 1;
+		ball = resetBall;
+		m_BallVelocityX = BALL_DEFAULT_SPEED;
+		m_BallyVelocityY = BALL_DEFAULT_SPEED;
+		m_BallVelocityX *= -1;
+	}
 
-    //ecran gauche = victoire player 2
-    else if (pos.x + m_BallVelocityX < 0)
-    {
-        m_score.y += 1;
-        ball->Reset();
-        m_BallVelocityX = BALL_DEFAULT_SPEED;
-        m_BallyVelocityY = BALL_DEFAULT_SPEED;
-        m_BallVelocityX *= -1;
-    }
+	//ecran gauche = victoire player 2
+	else if (pos.x + m_BallVelocityX < 0)
+	{
+		m_score.y += 1;
+		ball = resetBall;
+		m_BallVelocityX = BALL_DEFAULT_SPEED;
+		m_BallyVelocityY = BALL_DEFAULT_SPEED;
+		m_BallVelocityX *= -1;
+	}
 }

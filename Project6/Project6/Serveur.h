@@ -9,12 +9,14 @@
 #include <random>
 #include <thread>
 #include <string>
+#include <atomic>
+#include <chrono>
+#include <mutex>
 
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include "Game.h"
-#include <mutex>
 
 
 struct LobbyTwoPlayers {
@@ -61,15 +63,20 @@ private:
 
 	rapidjson::Document doc;
 
+	std::mutex mtx_newJson;
+	std::thread listenerThread;
+	std::thread senderThread;
+	std::atomic<bool> running;
 
 	int ballPosx, ballPosy, Dirx, Diry;
 
 	void CreateJson(LobbyTwoPlayers* lobby);
-	std::mutex mtx_newJson;
 
-	std::thread listenerThread;
 	bool listening;
 	int ListenAndRead();
+
+	void StartSending(); 
+	void StopSending();		
 
 public:
 	Serveur();

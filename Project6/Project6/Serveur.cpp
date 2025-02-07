@@ -12,6 +12,7 @@ Serveur::~Serveur()
 	if (listenerThread.joinable()) {
 		listenerThread.join();  // Attend que le thread se termine proprement
 	}
+	StopSending();
 }
 /// <summary>
 /// create Serveur
@@ -60,7 +61,7 @@ int Serveur::Update()
 		listenerThread = std::thread(&Serveur::ListenAndRead, this);
 	}
 
-	Send();
+	StartSending();
 	return 0;
 }
 
@@ -472,3 +473,24 @@ int Serveur::ListenAndRead()
 
 }
 
+
+
+void Serveur::StartSending() {
+	if (running.load()) return; // Vérifie si le thread est déjà en cours
+
+	running = true;
+	senderThread = std::thread([this]() {
+		while (running.load()) {
+			Send();
+			std::this_thread::sleep_for(std::chrono::seconds(1));  // Pause de 2 secondes
+		}
+		});
+}
+
+// Arrête le thread proprement
+void Serveur::StopSending() {
+	running = false;
+	if (senderThread.joinable()) {
+		senderThread.join();
+	}
+}

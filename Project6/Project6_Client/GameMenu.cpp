@@ -65,6 +65,8 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
     }
 
     client->Update(0, 0);
+
+    window->clear({ 41, 41, 41 });
     switch (actualMenuIndex) {
     case Menu::Menu_Main:
         MainMenuDisplay(window);
@@ -107,7 +109,7 @@ void GameMenu::HostMenuEvents(sf::Event event, Client* client)
 {
     if (selectedButtonIndex == HostMenu::HostMenu_PseudoField)
     {
-        if (event.type == sf::Event::KeyPressed && event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z)
+        if (event.type == sf::Event::KeyPressed && event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z && pseudo.size() < 10)
         {
             pseudo.push_back(static_cast<char>(event.key.code - sf::Keyboard::A + 'a'));
             std::cout << pseudo << std::endl;
@@ -134,7 +136,7 @@ void GameMenu::JoinMenuEvents(sf::Event event, Client* client)
 {
     if (selectedButtonIndex == JoinMenu::JoinMenu_PseudoField)
     {
-        if (event.type == sf::Event::KeyPressed && event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z)
+        if (event.type == sf::Event::KeyPressed && event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z && pseudo.size() < 10)
         {
             pseudo.push_back(static_cast<char>(event.key.code - sf::Keyboard::A + 'a'));
             std::cout << pseudo << std::endl;
@@ -170,43 +172,31 @@ void GameMenu::JoinMenuEvents(sf::Event event, Client* client)
 
 void GameMenu::MainMenuDisplay(sf::RenderWindow* window)
 {
-    window->clear(sf::Color::Black);
+    InitUIBox(window, BUTTON_SIZE, { 10, 10 }, "Host", MainMenu::MainMenu_HostBtn);
+    InitUIBox(window, BUTTON_SIZE, { 10, 80 }, "Join", MainMenu::MainMenu_JoinBtn);
 
-    InitRect(window, BUTTON_SIZE, { 10, 10 }, MainMenu::MainMenu_HostBtn);
-    InitRect(window, BUTTON_SIZE, { 10, 80 }, MainMenu::MainMenu_JoinBtn);
-
-    InitText(window, "Host", { 20, 20 });
-    InitText(window, "Join", { 20, 90 });
+    InitText(window, "Up/Down to navigate", { WINDOW_WIDTH - 10, WINDOW_HEIGHT - 30 }, sf::Color::White, { 1, 1 }, 10);
 }
 
 void GameMenu::HostMenuDisplay(sf::RenderWindow* window)
 {
-    window->clear(sf::Color::Black);
-    
-    InitRect(window, FIELD_SIZE, { 10, 10 }, HostMenu::HostMenu_PseudoField);
-    InitRect(window, BUTTON_SIZE, { 10, 80 }, HostMenu::HostMenu_HostBtn);
+    InitUIBox(window, FIELD_SIZE, { 10, 10 }, pseudo, HostMenu::HostMenu_PseudoField, "Enter a pseudonyme...");
+    InitUIBox(window, BUTTON_SIZE, { 10, 80 }, "Host", HostMenu::HostMenu_HostBtn);
 
-    InitText(window, pseudo, { 20, 10 });
-    InitText(window, "Host", {20, 90});
+    InitText(window, "Up/Down to navigate", { WINDOW_WIDTH - 10, WINDOW_HEIGHT - 30 }, sf::Color::White, { 1, 1 }, 10);
 }
 
 void GameMenu::JoinMenuDisplay(sf::RenderWindow* window)
 {
-    window->clear(sf::Color::Black);
-    
-    InitRect(window, FIELD_SIZE, { 10, 10 }, JoinMenu::JoinMenu_PseudoField);
-    InitRect(window, FIELD_SIZE, { 10, 50 }, JoinMenu::JoinMenu_GameIdField);
-    InitRect(window, BUTTON_SIZE, { 10, 90 }, JoinMenu::JoinMenu_JoinBtn);
+    InitUIBox(window, FIELD_SIZE, { 10, 10 }, pseudo, JoinMenu::JoinMenu_PseudoField, "Enter a pseudonyme...");
+    InitUIBox(window, FIELD_SIZE, { 10, 50 }, lobbyCode, JoinMenu::JoinMenu_GameIdField, "Enter the lobby id...");
+    InitUIBox(window, BUTTON_SIZE, { 10, 90 }, "Join", JoinMenu::JoinMenu_JoinBtn);
 
-    InitText(window, pseudo, { 20, 10 });
-    InitText(window, lobbyCode, { 20, 50 });
-    InitText(window, "Join", {20, 100});
+    InitText(window, "Up/Down to navigate", { WINDOW_WIDTH - 10, WINDOW_HEIGHT - 30 }, sf::Color::White, { 1, 1 }, 10);
 }
 
 void GameMenu::WaitingForOpponentDisplay(sf::RenderWindow* window, Client* client)
 {
-    window->clear(sf::Color::Black);
-
     std::string waitDots = ".";
     int elapsedTime = static_cast<int>(clock.getElapsedTime().asSeconds());
     if (elapsedTime % 3 < 1)
@@ -247,4 +237,25 @@ void GameMenu::InitText(sf::RenderWindow* window, std::string str, sf::Vector2f 
     text.setFillColor(fillColor);
 
     window->draw(text);
+}
+
+void GameMenu::InitUIBox(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, std::string str, int id, std::string placeholder)
+{
+    InitRect(window, size, pos, id);
+
+    sf::Vector2f btnSize = BUTTON_SIZE;
+    if (size == btnSize)
+    {
+        InitText(window, str, { pos.x + size.x * 0.5f, pos.y + size.y * 0.5f }, sf::Color::Black, { 0.5f, 0.5f });
+        if (selectedButtonIndex == id)
+            InitText(window, "Enter to confirm", { WINDOW_WIDTH - 10, WINDOW_HEIGHT - 10 }, sf::Color::White, { 1, 1 }, 10);
+    }
+    else
+    {
+        if (str.size() == 0 && placeholder.size() > 0)
+            InitText(window, placeholder, { pos.x + 10, pos.y + size.y * 0.5f }, { 163, 163, 163 }, {0, 0.5f}, 10);
+        InitText(window, str, { pos.x + 10, pos.y + size.y * 0.5f }, sf::Color::Black, { 0, 0.5f }, 20);
+        if (selectedButtonIndex == id)
+            InitText(window, "Keyboard to write", { WINDOW_WIDTH - 10, WINDOW_HEIGHT - 10 }, sf::Color::White, { 1, 1 }, 10);
+    }
 }

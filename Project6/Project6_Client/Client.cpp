@@ -93,8 +93,9 @@ void Client::Host(std::string name)
 /// </summary>
 void Client::Join(std::string name,std::string code)
 {
-	doc.SetObject();
-	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+	rapidjson::Document newDoc;
+	newDoc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
 	rapidjson::Value Join(rapidjson::kObjectType);
 
 	rapidjson::Value codeValue;
@@ -102,16 +103,18 @@ void Client::Join(std::string name,std::string code)
 	Join.AddMember("code", codeValue, allocator);
 
 	rapidjson::Value nameValue;
-	nameValue.SetString(code.c_str(), allocator);
+	nameValue.SetString(name.c_str(), allocator);
 	Join.AddMember("name", nameValue, allocator);
 
-	doc.AddMember("join", Join, allocator);
+	newDoc.AddMember("Join", Join, allocator);
 
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-	doc.Accept(writer);
+	newDoc.Accept(writer);
 
 	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	std::cout << "JSON envoyé : " << buffer.GetString() << std::endl;
+
 }
 
 
@@ -133,7 +136,7 @@ void Client::Update(int posPadx, int posPady)
 		ReadJson();
 		jsonToRead.clear();
 	}
-	CreateJson(posPadx, posPady);
+	/*CreateJson(posPadx, posPady);*/
 
 }
 

@@ -167,12 +167,12 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 	}
 
 	// Vérification si le document 'join' existe et est bien un objet
-	if (!doc.HasMember("join") || !doc["join"].IsObject()) {
+	if (!doc.HasMember("Join") || !doc["Join"].IsObject()) {
 		std::cerr << "Erreur : 'join' est manquant ou n'est pas un objet !" << std::endl;
 		return;
 	}
 
-	const rapidjson::Value& Code = doc["join"];  // Récupérer l'objet "join"
+	const rapidjson::Value& Code = doc["Join"];  // Récupérer l'objet "join"
 
 	// Afficher le contenu de "join" pour vérifier qu'il est bien ce que tu attends
 
@@ -394,31 +394,37 @@ int Serveur::ListenAndRead()
 		doc.Parse(readJson.c_str());
 		if (doc.HasParseError()) {
 			std::cerr << "Erreur de parsing JSON !" << std::endl;
+			listening = false;
 			return 1;
 		}
 		if (doc.HasMember("host")) {
 			std::string code = CreateLobby(baseclientadr, doc["name"].GetString());
 			AddList(baseclientadr);
+			listening = false;
 			return 0;
 		}
-		else if (doc.HasMember("join") && doc["join"].IsObject()) {
-			std::cout << "join\n";
+		else if (doc.HasMember("Join") && doc["Join"].IsObject()) {
+			std::cout << "Join\n";
 			JoinLobby(baseclientadr);
+			listening = false;
 			return 0;
 		}
 		else if (doc.HasMember("Disconnect")) {
 			std::cout << "kill client...\n";
 			RemoveClientFromList(baseclientadr);
+			listening = false;
 			return 1;
 		}
 		else if (doc.HasMember("Lobby")) {
 			PlayerMove();
+			listening = false;
 			return 0;
 		}
 		// Répondre au client
 		std::cout<<"Message recu !\n";
 	}
 	Send();
+	listening = false;
 	return 0;
 
 }

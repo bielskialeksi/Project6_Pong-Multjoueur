@@ -2,6 +2,7 @@
 
 
 
+
 Serveur::Serveur()
 {
 }
@@ -58,6 +59,7 @@ int Serveur::Update()
 		}
 		listenerThread = std::thread(&Serveur::ListenAndRead, this);
 	}
+	Send();
 	return 0;
 }
 
@@ -119,6 +121,8 @@ std::string Serveur::CreateLobby(sockaddr_in newclient, std::string name)
 	memset(&newLobby.player2, 0, sizeof(sockaddr_in));
 	newLobby.player1 = newclient;
 	newLobby.Player1Name = name;
+	if(ListLobbyTwoPlayers.empty()) newLobby.index =0;
+	else newLobby.index =(int) ListLobbyTwoPlayers.size();
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(10000, 99999);
@@ -167,24 +171,28 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 	}
 
 	// Vérification si le document 'join' existe et est bien un objet
-	if (!doc.HasMember("Join") || !doc["Join"].IsObject()) {
-		std::cerr << "Erreur : 'join' est manquant ou n'est pas un objet !" << std::endl;
+	if (!doc.IsObject() || !doc.HasMember("Join") || !doc["Join"].IsObject()) {
+		std::cerr << "Erreur JSON : Join est invalide\n";
 		return;
 	}
 
-	const rapidjson::Value& Code = doc["Join"];  // Récupérer l'objet "join"
+	const rapidjson::Value& Join = doc["Join"];  // Récupérer l'objet "join"
 
 	// Afficher le contenu de "join" pour vérifier qu'il est bien ce que tu attends
 
 
 	// Vérifier si 'code' est un membre de l'objet 'join' et si c'est bien une chaîne de caractères
-	if (!Code.HasMember("code") || !Code["code"].IsString()) {
+	if (!Join.HasMember("code") || !Join["code"].IsString()) {
+		std::cerr << "Erreur : 'code' est manquant ou n'est pas une chaîne de caractères !" << std::endl;
+		return;
+	}
+	if (!Join.HasMember("name") || !Join["name"].IsString()) {
 		std::cerr << "Erreur : 'code' est manquant ou n'est pas une chaîne de caractères !" << std::endl;
 		return;
 	}
 
-	std::string lobbyCode = Code["code"].GetString();  // Récupérer le code du lobby
-	std::string namePlayer = Code["name"].GetString();  // Récupérer le name
+	std::string lobbyCode = Join["code"].GetString();  // Récupérer le code du lobby
+	std::string namePlayer = Join["name"].GetString();  // Récupérer le name
 
 
 	// Recherche du lobby correspondant au code
@@ -200,13 +208,13 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 				lobby.Player2Name = namePlayer;
 				lobby.game = new Game();
 				newDoc.AddMember("HasJoin", lobby.index, allocator);
-				lobby.ready = true;
 				rapidjson::StringBuffer buffer;
 				rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 				newDoc.Accept(writer);
 				std::string jsonString = buffer.GetString();
 				sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
 				AddList(baseclientadr);
+				lobby.ready = true;
 				std::cout << "join\n";
 				return;
 			}
@@ -247,10 +255,11 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 /// <param name="message"></param>
 void Serveur::Send()
 {
-	std::cout << "Serveur Send" << std::endl;
-	for (LobbyTwoPlayers lobby : ListLobbyTwoPlayers) {
+	for (LobbyTwoPlayers& lobby : ListLobbyTwoPlayers) {
 		if (lobby.ready) {
+			std::cout << "Serveur Send" << std::endl;
 			CreateJson(&lobby); 
+			std::lock_guard<std::mutex> lock(mtx_newJson);
 			int clientAddrSize = sizeof(lobby.player1);
 			sendto(udpSocket, newJson.c_str(), (int)strlen(newJson.c_str()), 0, (sockaddr*)&lobby.player1, clientAddrSize);
 			clientAddrSize = sizeof(lobby.player2);
@@ -268,9 +277,9 @@ void Serveur::Send()
 /// <returns></returns>
 bool Serveur::compare_addresses(const sockaddr_in& addr1, const sockaddr_in& addr2) {
 	// Comparaison des adresses IP et des ports
-	return (addr1.sin_family == addr2.sin_family) &&
-		(addr1.sin_port == addr2.sin_port) &&
-		(memcmp(&addr1.sin_addr, &addr2.sin_addr, sizeof(addr1.sin_addr)) == 0);
+	return (addr1.sin_family == addr2.sin_family &&
+		addr1.sin_port == addr2.sin_port &&
+		addr1.sin_addr.s_addr == addr2.sin_addr.s_addr);
 }
 
 
@@ -334,17 +343,22 @@ void Serveur::PlayerMove()
 /// <param name="DirBally"></param>
 void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 {
+	if (!lobby->game) {
+		std::cerr << "Erreur : lobby->game est NULL\n";
+		return;
+	}
 	rapidjson::Document newDoc;
+	newDoc.SetObject(); // Initialisation nécessaire
 	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
-
+	std::cout << "1" << std::endl;
 	//Ball
 	rapidjson::Value Ball(rapidjson::kObjectType);
 	Ball.AddMember("Posx", lobby->game->ball.x, allocator);
-	Ball.AddMember("Posy", lobby->game->ball.x, allocator);
+	Ball.AddMember("Posy", lobby->game->ball.y, allocator);
 	Ball.AddMember("Scalex", lobby->game->ballScale.x, allocator);
 	Ball.AddMember("Scaley", lobby->game->ballScale.y, allocator);
 	newDoc.AddMember("Ball", Ball, allocator);
-
+	std::cout << "2" << std::endl;
 	//Player 1
 	rapidjson::Value Player1(rapidjson::kObjectType);
 	Player1.AddMember("Posx", lobby->game->racket_1.x, allocator);
@@ -352,7 +366,7 @@ void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 	Player1.AddMember("Scalex", lobby->game->scaleRacket.x, allocator);
 	Player1.AddMember("Scaley", lobby->game->scaleRacket.y, allocator);
 	newDoc.AddMember("Player1", Player1, allocator);
-
+	std::cout << "3" << std::endl;
 	//Player 2
 	rapidjson::Value Player2(rapidjson::kObjectType);
 	Player2.AddMember("Posx", lobby->game->racket_2.x, allocator);
@@ -361,13 +375,14 @@ void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 	Player2.AddMember("Scaley", lobby->game->scaleRacket.y, allocator);
 	newDoc.AddMember("Player2", Player2, allocator);
 
+	std::cout << "4" << std::endl;
 	//Score
 	rapidjson::Value Score(rapidjson::kObjectType);
 	Score.AddMember("Score1", lobby->game->m_score.x, allocator);
 	Score.AddMember("Score2", lobby->game->m_score.y, allocator);
 	newDoc.AddMember("Score", Score, allocator);
 
-
+	std::cout << "5" << std::endl;
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	newDoc.Accept(writer);
@@ -375,6 +390,7 @@ void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 	std::string jsonString = buffer.GetString();
 
 	newJson = jsonString;
+	std::cout << "end" << std::endl;
 }
 
 /// <summary>
@@ -382,11 +398,15 @@ void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 /// </summary>
 int Serveur::ListenAndRead()
 {
-	char buffer[1024];
+	char buffer[2048];
 
 	int clientAddrSize = sizeof(baseclientadr);
 	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&baseclientadr, &clientAddrSize);
 	if (bytesReceived > 0) {
+		if (bytesReceived >= sizeof(buffer)) {
+			std::cerr << "Erreur : Message trop long\n";
+			return 1;
+		}
 		buffer[bytesReceived] = '\0';
 		readJson = buffer;
 		std::cout << "Message reçu : " << buffer << "\n";
@@ -397,6 +417,11 @@ int Serveur::ListenAndRead()
 			listening = false;
 			return 1;
 		}
+		if (!doc.IsObject()) {
+			std::cerr << "Erreur : JSON invalide ou incorrect. Contenu: " << readJson << std::endl;
+			return 1;
+		}
+
 		if (doc.HasMember("host")) {
 			std::string code = CreateLobby(baseclientadr, doc["name"].GetString());
 			AddList(baseclientadr);
@@ -404,7 +429,6 @@ int Serveur::ListenAndRead()
 			return 0;
 		}
 		else if (doc.HasMember("Join") && doc["Join"].IsObject()) {
-			std::cout << "Join\n";
 			JoinLobby(baseclientadr);
 			listening = false;
 			return 0;
@@ -423,7 +447,6 @@ int Serveur::ListenAndRead()
 		// Répondre au client
 		std::cout<<"Message recu !\n";
 	}
-	Send();
 	listening = false;
 	return 0;
 

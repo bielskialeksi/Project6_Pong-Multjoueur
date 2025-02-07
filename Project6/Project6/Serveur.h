@@ -14,7 +14,7 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include "Game.h"
-
+#include <mutex>
 
 
 struct LobbyTwoPlayers {
@@ -65,6 +65,7 @@ private:
 	int ballPosx, ballPosy, Dirx, Diry;
 
 	void CreateJson(LobbyTwoPlayers* lobby);
+	std::mutex mtx_newJson;
 
 	std::thread listenerThread;
 	bool listening;

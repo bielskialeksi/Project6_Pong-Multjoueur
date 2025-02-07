@@ -57,7 +57,7 @@ public:
 
 
 
-
+	bool IsConected() { return conected; };
 	std::string GetCodeClient();
 };
 

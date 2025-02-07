@@ -222,26 +222,25 @@ void Client::ReadJson()
 		}
 		//Read pos Player1
 		if (doc.HasMember("Player1") && doc["Player1"].IsObject()) {
-			const rapidjson::Value& playerAdv = doc["Player1"]; // Récupérer l'objet
-
+			const rapidjson::Value& Racket1 = doc["Player1"]; // Récupérer l'objet
 			// Vérifier si "Posx" et "Posy" existent
-			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-				PosPLayer1x = playerAdv["Posx"].GetInt();
+			if (Racket1.HasMember("Posx") && Racket1["Posx"].IsFloat()) {
+				PosPLayer1x = Racket1["Posx"].GetInt();
 			}
-			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-				PosPLayer1x = playerAdv["Posx"].GetInt();;
+			if (Racket1.HasMember("Posy") && Racket1["Posy"].IsFloat()) {
+				PosPLayer1x = Racket1["Posx"].GetInt();;
 			}
 		}
 		//pos Player2
 		if (doc.HasMember("Player2") && doc["Player2"].IsObject()) {
-			const rapidjson::Value& playerAdv = doc["Player2"]; // Récupérer l'objet
+			const rapidjson::Value& Racket2 = doc["Player2"]; // Récupérer l'objet
 
 			// Vérifier si "Posx" et "Posy" existent
-			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-				PosPLayer2x = playerAdv["Posx"].GetInt();
+			if (Racket2.HasMember("Posx") && Racket2["Posx"].IsFloat()) {
+				PosPLayer2x = Racket2["Posx"].GetInt();
 			}
-			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-				PosPLayer2y = playerAdv["Posy"].GetInt();
+			if (Racket2.HasMember("Posy") && Racket2["Posy"].IsFloat()) {
+				PosPLayer2y = Racket2["Posy"].GetInt();
 			}
 		}
 		//Read pos Ball 
@@ -249,10 +248,10 @@ void Client::ReadJson()
 			const rapidjson::Value& Ball = doc["Ball"]; // Récupérer l'objet
 
 			// Vérifier si "Posx" et "Posy" existent
-			if (Ball.HasMember("Posx") && Ball["Posx"].IsInt()) {
+			if (Ball.HasMember("Posx") && Ball["Posx"].IsFloat()) {
 				PosBallx = Ball["Posx"].GetInt();
 			}
-			if (Ball.HasMember("Posy") && Ball["Posy"].IsInt()) {
+			if (Ball.HasMember("Posy") && Ball["Posy"].IsFloat()) {
 				PosBally = Ball["Posy"].GetInt();
 			}
 		}
@@ -260,11 +259,11 @@ void Client::ReadJson()
 			const rapidjson::Value& Score = doc["Score"]; // Récupérer l'objet
 
 			// Vérifier si "Posx" et "Posy" existent
-			if (Score.HasMember("Score1") && Score["Score1"].IsInt()) {
+			if (Score.HasMember("Score1") && Score["Score1"].IsFloat()) {
 				score1= Score["Score1"].GetInt();
 			}
 			if (Score.HasMember("Posy") && Score["Posy"].IsInt()) {
-				score2 = Score["Posy"].GetInt();
+				score2 = Score["Posy"].IsFloat();
 			}
 		}
 	}

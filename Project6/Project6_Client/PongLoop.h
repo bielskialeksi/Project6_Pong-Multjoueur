@@ -9,7 +9,7 @@ class PongLoop
 	public:
 		PongLoop();
 		void Loop(sf::RenderWindow*, Client*);
-		void UpdateElement();
+		void UpdateElement(Client* client);
 	private:
 		sf::Vector2i m_score;						//x = score player 1 / y = score player 2
 		Entity* ball;								//ball principal

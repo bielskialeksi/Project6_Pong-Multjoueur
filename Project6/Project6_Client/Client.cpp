@@ -225,10 +225,10 @@ void Client::ReadJson()
 			const rapidjson::Value& Racket1 = doc["Player1"]; // Récupérer l'objet
 			// Vérifier si "Posx" et "Posy" existent
 			if (Racket1.HasMember("Posx") && Racket1["Posx"].IsFloat()) {
-				PosPLayer1x = Racket1["Posx"].GetInt();
+				PosPLayer1x = Racket1["Posx"].GetFloat();
 			}
 			if (Racket1.HasMember("Posy") && Racket1["Posy"].IsFloat()) {
-				PosPLayer1x = Racket1["Posx"].GetInt();;
+				PosPLayer1x = Racket1["Posx"].GetFloat();;
 			}
 		}
 		//pos Player2
@@ -237,10 +237,10 @@ void Client::ReadJson()
 
 			// Vérifier si "Posx" et "Posy" existent
 			if (Racket2.HasMember("Posx") && Racket2["Posx"].IsFloat()) {
-				PosPLayer2x = Racket2["Posx"].GetInt();
+				PosPLayer2x = Racket2["Posx"].GetFloat();
 			}
 			if (Racket2.HasMember("Posy") && Racket2["Posy"].IsFloat()) {
-				PosPLayer2y = Racket2["Posy"].GetInt();
+				PosPLayer2y = Racket2["Posy"].GetFloat();
 			}
 		}
 		//Read pos Ball 
@@ -249,10 +249,10 @@ void Client::ReadJson()
 
 			// Vérifier si "Posx" et "Posy" existent
 			if (Ball.HasMember("Posx") && Ball["Posx"].IsFloat()) {
-				PosBallx = Ball["Posx"].GetInt();
+				PosBallx = Ball["Posx"].GetFloat();
 			}
 			if (Ball.HasMember("Posy") && Ball["Posy"].IsFloat()) {
-				PosBally = Ball["Posy"].GetInt();
+				PosBally = Ball["Posy"].GetFloat();
 			}
 		}
 		if (doc.HasMember("Score") && doc["Score"].IsObject()) {
@@ -260,10 +260,10 @@ void Client::ReadJson()
 
 			// Vérifier si "Posx" et "Posy" existent
 			if (Score.HasMember("Score1") && Score["Score1"].IsFloat()) {
-				score1= Score["Score1"].GetInt();
+				score1= Score["Score1"].GetFloat();
 			}
-			if (Score.HasMember("Posy") && Score["Posy"].IsInt()) {
-				score2 = Score["Posy"].IsFloat();
+			if (Score.HasMember("Posy") && Score["Posy"].IsFloat()) {
+				score2 = Score["Posy"].GetFloat();
 			}
 		}
 	}

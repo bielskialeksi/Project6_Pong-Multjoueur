@@ -304,7 +304,7 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 void Serveur::Send()
 {
 	for (LobbyTwoPlayers& lobby : ListLobbyTwoPlayers) {
-		if (lobby.ready) {
+		if (lobby.ready && lobby.game) {
 			lobby.game->Loop();
 			CreateJson(&lobby);
 			std::lock_guard<std::mutex> lock(mtx_newJson);
@@ -368,7 +368,7 @@ void Serveur::PlayerMove(sockaddr_in client)
 	}
 	int lobby = doc["Lobby"].GetInt();
 
-	if (ListLobbyTwoPlayers[lobby].ready) {
+	if (ListLobbyTwoPlayers[lobby].ready && ListLobbyTwoPlayers[lobby].game) {
 
 		if (!doc.HasMember("Move") || !doc["Move"].IsBool()) {
 			std::cerr << "Erreur : 'name' est manquant ou n'est pas une chaîne de caractères !" << std::endl;

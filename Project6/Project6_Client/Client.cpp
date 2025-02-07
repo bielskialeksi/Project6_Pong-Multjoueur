@@ -26,10 +26,6 @@ Client::Client()
 Client::~Client()
 {
 	Shutdown();
-	if (listenerThread.joinable()) {
-		listenerThread.join();  // Attend la fin du thread
-	}
-
 }
 /// <summary>
 /// Mqke the first connexion with the serveur
@@ -128,19 +124,18 @@ void Client::Join(std::string name,std::string code)
 /// </summary>
 void Client::Update()
 {
-	if (!listening) {
+	if (!listening && running) {  // Vérifie que le thread peut être lancé
 		listening = true;
 		if (listenerThread.joinable()) {
-			listenerThread.join();  // On termine l'ancien thread avant d'en créer un nouveau
+			listenerThread.join();  // Attend la fin du thread précédent
 		}
 		listenerThread = std::thread(&Client::Listen, this);
 	}
-	if (jsonToRead != "") {
+
+	if (!jsonToRead.empty()) {
 		ReadJson();
 		jsonToRead.clear();
 	}
-	/*CreateJson(posPadx, posPady);*/
-
 }
 
 /// <summary>

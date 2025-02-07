@@ -23,6 +23,7 @@ private:
 	std::string jsonToRead="";
 
 	std::thread listenerThread;
+	std::atomic<bool> running{ true };
 	bool listening = false;
 
 	std::string clientCode;
@@ -33,7 +34,6 @@ private:
 	void ReadJson();
 
 	void Shutdown();
-	bool running = true;
 public:
 	int PosPLayer1x;
 	int PosPLayer1y;

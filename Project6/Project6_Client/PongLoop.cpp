@@ -22,19 +22,19 @@ void PongLoop::Loop(sf::RenderWindow* window, Client* client)
             {
             case PLAYER_1_UP:               //raquette player 1 monte
                 //TODO racket_1 m_state = UP
-                client->Move(0);
+                client->Move(1);
                 break;
             case PLAYER_1_DOWN:             //raquette player 1 descends
                 //TODO racket_1 m_state = DOWN
-                client->Move(1);
+                client->Move(0);
                 break;
             case PLAYER_2_UP:               //raquette player 2 monte
                 //TODO racket_2 m_state = UP
-                client->Move(0);
+                client->Move(1);
                 break;
             case PLAYER_2_DOWN:             //raquette player 2 descends
                 //TODO racket_2 m_state = DOWN
-                client->Move(1);
+                client->Move(0);
                 break;
 
             default:
@@ -57,12 +57,21 @@ void PongLoop::Loop(sf::RenderWindow* window, Client* client)
         }
 	}
 
-    client->Update(0, 0);
+    client->Update();
+    UpdateElement(client);
     window->clear(sf::Color::Green);
     window->draw(ball->GetShape());
     window->draw(racket_1->GetShape());
     window->draw(racket_2->GetShape());
     window->display();
 
+}
+
+void PongLoop::UpdateElement(Client* client)
+{
+    ball->Move((float)client->PosBallx, (float)client->PosBally);
+    racket_1->Move((float)client->PosPLayer1x, (float)client->PosPLayer1y);
+    racket_2->Move((float)client->PosPLayer2x, (float)client->PosPLayer2y);
+    m_score = sf::Vector2i(client->score1, client->score2);
 }
 

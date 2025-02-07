@@ -64,7 +64,7 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
         }
     }
 
-    client->Update(0, 0);
+    client->Update();
 
     window->clear({ 41, 41, 41 });
     switch (actualMenuIndex) {

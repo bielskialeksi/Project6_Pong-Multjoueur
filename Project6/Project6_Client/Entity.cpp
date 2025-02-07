@@ -28,8 +28,8 @@ void Entity::init()														//initialise les propriétées de m_shape
 
 void Entity::Move(float x, float y)										//déplace m_shape en ajoutant les arguments
 {
-	m_pos.x += x;
-	m_pos.y += y;
+	m_pos.x = x;
+	m_pos.y = y;
 
 	m_shape.setPosition(m_pos);
 }

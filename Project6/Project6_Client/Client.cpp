@@ -46,7 +46,7 @@ int Client::Connect()
 
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(50500);  // ⚠️ On utilise 50500
-	inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);  // Adresse du serveur
+	inet_pton(AF_INET, "192.168.58.177", &serverAddr.sin_addr);  // Adresse du serveur
 
 	//const char* message = "Hello, serveur UDP!";
 	//sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
@@ -123,7 +123,7 @@ void Client::Join(std::string name,std::string code)
 /// <summary>
 /// Listen the serveur and create next package and send to serveur;
 /// </summary>
-void Client::Update(int posPadx, int posPady)
+void Client::Update()
 {
 	if (!listening) {
 		listening = true;
@@ -165,11 +165,11 @@ void Client::Move(bool UpOrDown)
 	rapidjson::Document newDoc;
 	newDoc.SetObject();
 	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
-	doc.AddMember("Lobby", lobby, allocator);
-	doc.AddMember("Move", UpOrDown, allocator);
+	newDoc.AddMember("Lobby", lobby, allocator);
+	newDoc.AddMember("Move", UpOrDown, allocator);
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-	doc.Accept(writer);
+	newDoc.Accept(writer);
 	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 
@@ -220,37 +220,50 @@ void Client::ReadJson()
 			conected = false;
 			return;
 		}
-		//Read pos ADV
-		if (doc.HasMember("PlayerAdv") && doc["PlayerAdv"].IsObject()) {
-			const rapidjson::Value& playerAdv = doc["PlayerAdv"]; // Récupérer l'objet
-
+		//Read pos Player1
+		if (doc.HasMember("Player1") && doc["Player1"].IsObject()) {
+			const rapidjson::Value& Racket1 = doc["Player1"]; // Récupérer l'objet
 			// Vérifier si "Posx" et "Posy" existent
-			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-				std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+			if (Racket1.HasMember("Posx") && Racket1["Posx"].IsFloat()) {
+				PosPLayer1x = Racket1["Posx"].GetFloat();
 			}
-			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-				std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+			if (Racket1.HasMember("Posy") && Racket1["Posy"].IsFloat()) {
+				PosPLayer1y = Racket1["Posy"].GetFloat();;
 			}
 		}
+		//pos Player2
+		if (doc.HasMember("Player2") && doc["Player2"].IsObject()) {
+			const rapidjson::Value& Racket2 = doc["Player2"]; // Récupérer l'objet
 
+			// Vérifier si "Posx" et "Posy" existent
+			if (Racket2.HasMember("Posx") && Racket2["Posx"].IsFloat()) {
+				PosPLayer2x = Racket2["Posx"].GetFloat();
+			}
+			if (Racket2.HasMember("Posy") && Racket2["Posy"].IsFloat()) {
+				PosPLayer2y = Racket2["Posy"].GetFloat();
+			}
+		}
 		//Read pos Ball 
 		if (doc.HasMember("Ball") && doc["Ball"].IsObject()) {
 			const rapidjson::Value& Ball = doc["Ball"]; // Récupérer l'objet
 
 			// Vérifier si "Posx" et "Posy" existent
-			if (Ball.HasMember("Posx") && Ball["Posx"].IsInt()) {
-				std::cout << "Posx : " << Ball["Posx"].GetInt() << std::endl;
+			if (Ball.HasMember("Posx") && Ball["Posx"].IsFloat()) {
+				PosBallx = Ball["Posx"].GetFloat();
 			}
-			if (Ball.HasMember("Posy") && Ball["Posy"].IsInt()) {
-				std::cout << "Posy : " << Ball["Posy"].GetInt() << std::endl;
+			if (Ball.HasMember("Posy") && Ball["Posy"].IsFloat()) {
+				PosBally = Ball["Posy"].GetFloat();
 			}
+		}
+		if (doc.HasMember("Score") && doc["Score"].IsObject()) {
+			const rapidjson::Value& Score = doc["Score"]; // Récupérer l'objet
 
-			// Vérifier si "Dirx" et "Diry" existent
-			if (Ball.HasMember("Dirx") && Ball["Dirx"].IsInt()) {
-				std::cout << "Dirx : " << Ball["Dirx"].GetInt() << std::endl;
+			// Vérifier si "Posx" et "Posy" existent
+			if (Score.HasMember("Score1") && Score["Score1"].IsFloat()) {
+				score1= Score["Score1"].GetFloat();
 			}
-			if (Ball.HasMember("Diry") && Ball["Diry"].IsInt()) {
-				std::cout << "Diry : " << Ball["Diry"].GetInt() << std::endl;
+			if (Score.HasMember("Posy") && Score["Posy"].IsFloat()) {
+				score2 = Score["Posy"].GetFloat();
 			}
 		}
 	}

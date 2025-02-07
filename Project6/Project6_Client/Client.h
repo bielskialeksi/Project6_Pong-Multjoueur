@@ -35,15 +35,15 @@ private:
 public:
 	int PosPLayer1x;
 	int PosPLayer1y;
-	
+
 	int PosPLayer2x;
 	int PosPLayer2y;
 	
 	int PosBallx;
 	int PosBally;
 
-	int DirBallx;
-	int DirBally;
+	int score1;
+	int score2;
 
 	Client();
 	~Client();
@@ -53,7 +53,7 @@ public:
 	void Host(std::string name);
 	void Join(std::string name,std::string code);
 
-	void Update(int posPadx, int PosPady);
+	void Update();
 	int Disconnect();
 
 	void Move(bool UpOrDown);

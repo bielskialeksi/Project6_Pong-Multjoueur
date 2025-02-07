@@ -12,6 +12,7 @@ Serveur::~Serveur()
 	if (listenerThread.joinable()) {
 		listenerThread.join();  // Attend que le thread se termine proprement
 	}
+	StopSending();
 }
 /// <summary>
 /// create Serveur
@@ -40,6 +41,30 @@ int Serveur::Begin()
 		WSACleanup();
 		return 1;
 	}
+	
+	char host[NI_MAXHOST];
+	gethostname(host, NI_MAXHOST);  // Récupère le nom de l'hôte
+
+	addrinfo hints{}, * res;
+	hints.ai_family = AF_INET;  // On veut une adresse IPv4
+	hints.ai_socktype = SOCK_DGRAM;
+	hints.ai_flags = AI_PASSIVE;
+
+	if (getaddrinfo(host, nullptr, &hints, &res) == 0) {
+		for (addrinfo* p = res; p != nullptr; p = p->ai_next) {
+			sockaddr_in* ipv4 = (sockaddr_in*)p->ai_addr;
+			char ipStr[INET_ADDRSTRLEN];
+			inet_ntop(AF_INET, &ipv4->sin_addr, ipStr, INET_ADDRSTRLEN);
+			std::cout << "Serveur en écoute sur l'adresse locale : " << ipStr << std::endl;
+		}
+		freeaddrinfo(res);
+	}
+	else {
+		std::cerr << "Erreur : Impossible de récupérer l'adresse locale\n";
+	}
+
+
+
 
 	std::cout << "Serveur UDP en écoute sur le port 50500...\n";
 	return 0;
@@ -59,7 +84,8 @@ int Serveur::Update()
 		}
 		listenerThread = std::thread(&Serveur::ListenAndRead, this);
 	}
-	Send();
+
+	StartSending();
 	return 0;
 }
 
@@ -268,6 +294,7 @@ void Serveur::Send()
 {
 	for (LobbyTwoPlayers& lobby : ListLobbyTwoPlayers) {
 		if (lobby.ready) {
+			lobby.game->Loop();
 			CreateJson(&lobby);
 			std::lock_guard<std::mutex> lock(mtx_newJson);
 			int clientAddrSize = sizeof(lobby.player1);
@@ -276,7 +303,6 @@ void Serveur::Send()
 			sendto(udpSocket, newJson.c_str(), (int)strlen(newJson.c_str()), 0, (sockaddr*)&lobby.player2, clientAddrSize);
 		}
 	}
-
 }
 
 /// <summary>
@@ -315,7 +341,6 @@ void Serveur::AdvDisconect(sockaddr_in player)
 	newDoc.Accept(writer);
 	std::string jsonString = buffer.GetString();
 	sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&player, sizeof(player));
-
 
 }
 
@@ -472,3 +497,30 @@ int Serveur::ListenAndRead()
 
 }
 
+
+
+void Serveur::StartSending() {
+	if (running.load()) return; // Vérifie si le thread est déjà en cours
+
+	running = true;
+	senderThread = std::thread([this]() {
+		while (running.load()) {
+			auto start = std::chrono::high_resolution_clock::now();  // Temps de début
+
+			Send();
+
+			// Calculer le temps écoulé et ajuster le délai
+			auto end = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double, std::milli> elapsed = end - start;
+			std::this_thread::sleep_for(std::chrono::milliseconds(16) - elapsed);
+		}
+		});
+}
+
+// Arrête le thread proprement
+void Serveur::StopSending() {
+	running = false;
+	if (senderThread.joinable()) {
+		senderThread.join();
+	}
+}

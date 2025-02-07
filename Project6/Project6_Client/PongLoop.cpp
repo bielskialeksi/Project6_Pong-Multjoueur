@@ -20,39 +20,14 @@ void PongLoop::Loop(sf::RenderWindow* window, Client* client)
         {
             switch (event.key.code)
             {
-            case PLAYER_1_UP:               //raquette player 1 monte
-                //TODO racket_1 m_state = UP
-                client->Move(1);
-                break;
-            case PLAYER_1_DOWN:             //raquette player 1 descends
-                //TODO racket_1 m_state = DOWN
+            case PLAYER_DOWN:             //la raquette descends
                 client->Move(0);
                 break;
-            case PLAYER_2_UP:               //raquette player 2 monte
-                //TODO racket_2 m_state = UP
+            case PLAYER_UP:               //la raquette monte
                 client->Move(1);
                 break;
-            case PLAYER_2_DOWN:             //raquette player 2 descends
-                //TODO racket_2 m_state = DOWN
-                client->Move(0);
-                break;
-
             default:
                 break;
-            }
-
-        }
-        if (event.type == sf::Event::KeyReleased)               //arrête la raquette concerné par la touche libérée
-        {
-            if (event.key.code == PLAYER_1_UP || event.key.code == PLAYER_1_DOWN)
-            {
-                //TODO racket_1 m_state = NEUTRE
-
-            }
-            if (event.key.code == PLAYER_2_UP || event.key.code == PLAYER_2_DOWN)
-            {
-                //TODO racket_2 m_state = NEUTRE
-
             }
         }
 	}

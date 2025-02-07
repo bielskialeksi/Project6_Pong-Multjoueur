@@ -34,24 +34,7 @@ void Entity::Move(float x, float y)										//déplace m_shape en ajoutant les a
 	m_shape.setPosition(m_pos);
 }
 
-void Entity::Reset()													//reset des positions de la balle
-{
-	m_pos = {WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2};
-	m_shape.setPosition(m_pos);
-}
-
-
 const sf::RectangleShape Entity::GetShape()								//retourne m_shape
 {
 	return m_shape;
-}
-
-void Entity::ChangeState(Movement state)								//change la state de l'objet
-{
-	m_moveState = state;
-}
-
-Entity::Movement Entity::GetState()										//recupère la state actuelle de l'objet
-{
-	return m_moveState;
 }

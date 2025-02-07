@@ -78,7 +78,7 @@ void Game::MoveBall()           //deplace la balle en x & y
 }
 
 
-void Game::CheckWin()                                                                   //Teste si la balle va sortir des écran latérale. Si positif : +1 au score du gagnant & reset la pos et vitesse de la balle
+void Game::CheckWin()				//Teste si la balle va sortir des écran latérale. Si positif : +1 au score du gagnant & reset la pos et vitesse de la balle
 {
 	Vector2f pos = ball;
 	Vector2f scale = ballScale;

@@ -9,10 +9,9 @@
 
 #define BUTTON_HOVER_COLOR { 255, 255, 120 }
 
-#define PLAYER_1_UP sf::Keyboard::Z
-#define PLAYER_1_DOWN sf::Keyboard::S
-#define PLAYER_2_UP sf::Keyboard::Up
-#define PLAYER_2_DOWN sf::Keyboard::Down
+
+#define PLAYER_UP sf::Keyboard::Up
+#define PLAYER_DOWN sf::Keyboard::Down
 
 #define RACKET_VELOCITY 10.f
 #define BALL_DEFAULT_SPEED 2.f

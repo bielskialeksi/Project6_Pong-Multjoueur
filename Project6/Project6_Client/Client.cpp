@@ -228,7 +228,7 @@ void Client::ReadJson()
 				PosPLayer1x = Racket1["Posx"].GetFloat();
 			}
 			if (Racket1.HasMember("Posy") && Racket1["Posy"].IsFloat()) {
-				PosPLayer1x = Racket1["Posy"].GetFloat();;
+				PosPLayer1y = Racket1["Posy"].GetFloat();;
 			}
 		}
 		//pos Player2

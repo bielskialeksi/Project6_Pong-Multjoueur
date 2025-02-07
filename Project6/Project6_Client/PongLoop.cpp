@@ -22,15 +22,19 @@ void PongLoop::Loop(sf::RenderWindow* window, Client* client)
             {
             case PLAYER_1_UP:               //raquette player 1 monte
                 //TODO racket_1 m_state = UP
+                client->Move(0);
                 break;
             case PLAYER_1_DOWN:             //raquette player 1 descends
                 //TODO racket_1 m_state = DOWN
+                client->Move(1);
                 break;
             case PLAYER_2_UP:               //raquette player 2 monte
                 //TODO racket_2 m_state = UP
+                client->Move(0);
                 break;
             case PLAYER_2_DOWN:             //raquette player 2 descends
                 //TODO racket_2 m_state = DOWN
+                client->Move(1);
                 break;
 
             default:

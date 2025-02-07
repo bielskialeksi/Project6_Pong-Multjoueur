@@ -8,15 +8,14 @@ void Client::Listen()
 	char buffer[1024];
 	sockaddr_in senderAddr;
 	int senderLen = sizeof(senderAddr);
+	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&senderAddr, (socklen_t*)&senderLen);
 
-	while (running) {  // On écoute seulement si `running` est vrai
-		int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&senderAddr, (socklen_t*)&senderLen);
-
-		if (bytesReceived > 0) {
-			buffer[bytesReceived] = '\0';
-			jsonToRead = buffer;
-		}
+	if (bytesReceived > 0) {
+		buffer[bytesReceived] = '\0';
+		//std::cout << " Message : " << buffer << std::endl;
+		jsonToRead = buffer;
 	}
+	listening = false;
 }
 
 Client::Client()

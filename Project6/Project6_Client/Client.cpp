@@ -226,10 +226,10 @@ void Client::ReadJson()
 
 			// Vérifier si "Posx" et "Posy" existent
 			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
-				std::cout << "Posx : " << playerAdv["Posx"].GetInt() << std::endl;
+				PosPLayer1x = playerAdv["Posx"].GetInt();
 			}
 			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
-				std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
+				PosPLayer1x = playerAdv["Posx"].GetInt();;
 			}
 		}
 		//pos Player2

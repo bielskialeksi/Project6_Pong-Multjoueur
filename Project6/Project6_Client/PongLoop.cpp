@@ -58,11 +58,19 @@ void PongLoop::Loop(sf::RenderWindow* window, Client* client)
 	}
 
     client->Update();
+    UpdateElement(client);
     window->clear(sf::Color::Green);
     window->draw(ball->GetShape());
     window->draw(racket_1->GetShape());
     window->draw(racket_2->GetShape());
     window->display();
 
+}
+
+void PongLoop::UpdateElement(Client* client)
+{
+    ball->Move(client->PosBallx, client->PosBally);
+    racket_1->Move(client->PosPLayer1x, client->PosPLayer1y);
+    racket_2->Move(client->PosPLayer2x, client->PosPLayer2y);
 }
 

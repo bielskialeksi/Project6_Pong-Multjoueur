@@ -41,6 +41,30 @@ int Serveur::Begin()
 		WSACleanup();
 		return 1;
 	}
+	
+	char host[NI_MAXHOST];
+	gethostname(host, NI_MAXHOST);  // Récupère le nom de l'hôte
+
+	addrinfo hints{}, * res;
+	hints.ai_family = AF_INET;  // On veut une adresse IPv4
+	hints.ai_socktype = SOCK_DGRAM;
+	hints.ai_flags = AI_PASSIVE;
+
+	if (getaddrinfo(host, nullptr, &hints, &res) == 0) {
+		for (addrinfo* p = res; p != nullptr; p = p->ai_next) {
+			sockaddr_in* ipv4 = (sockaddr_in*)p->ai_addr;
+			char ipStr[INET_ADDRSTRLEN];
+			inet_ntop(AF_INET, &ipv4->sin_addr, ipStr, INET_ADDRSTRLEN);
+			std::cout << "Serveur en écoute sur l'adresse locale : " << ipStr << std::endl;
+		}
+		freeaddrinfo(res);
+	}
+	else {
+		std::cerr << "Erreur : Impossible de récupérer l'adresse locale\n";
+	}
+
+
+
 
 	std::cout << "Serveur UDP en écoute sur le port 50500...\n";
 	return 0;

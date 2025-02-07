@@ -46,7 +46,7 @@ int Client::Connect()
 
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(50500);  // ⚠️ On utilise 50500
-	inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);  // Adresse du serveur
+	inet_pton(AF_INET, "192.168.58.177", &serverAddr.sin_addr);  // Adresse du serveur
 
 	//const char* message = "Hello, serveur UDP!";
 	//sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));

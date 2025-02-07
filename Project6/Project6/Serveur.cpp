@@ -276,7 +276,6 @@ void Serveur::Send()
 			sendto(udpSocket, newJson.c_str(), (int)strlen(newJson.c_str()), 0, (sockaddr*)&lobby.player2, clientAddrSize);
 		}
 	}
-
 }
 
 /// <summary>
@@ -315,7 +314,6 @@ void Serveur::AdvDisconect(sockaddr_in player)
 	newDoc.Accept(writer);
 	std::string jsonString = buffer.GetString();
 	sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&player, sizeof(player));
-
 
 }
 

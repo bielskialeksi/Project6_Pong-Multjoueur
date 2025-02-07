@@ -256,6 +256,17 @@ void Client::ReadJson()
 				PosBally = Ball["Posy"].GetInt();
 			}
 		}
+		if (doc.HasMember("Score") && doc["Score"].IsObject()) {
+			const rapidjson::Value& Score = doc["Score"]; // Récupérer l'objet
+
+			// Vérifier si "Posx" et "Posy" existent
+			if (Score.HasMember("Score1") && Score["Score1"].IsInt()) {
+				score1= Score["Score1"].GetInt();
+			}
+			if (Score.HasMember("Posy") && Score["Posy"].IsInt()) {
+				score2 = Score["Posy"].GetInt();
+			}
+		}
 	}
 	else if (doc.HasMember("NotFound") || doc.HasMember("Full")) {
 		/// 

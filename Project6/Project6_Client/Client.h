@@ -42,7 +42,8 @@ public:
 	int PosBallx;
 	int PosBally;
 
-
+	int score1;
+	int score2;
 
 	Client();
 	~Client();

@@ -481,8 +481,14 @@ void Serveur::StartSending() {
 	running = true;
 	senderThread = std::thread([this]() {
 		while (running.load()) {
+			auto start = std::chrono::high_resolution_clock::now();  // Temps de début
+
 			Send();
-			std::this_thread::sleep_for(std::chrono::seconds(1));  // Pause de 2 secondes
+
+			// Calculer le temps écoulé et ajuster le délai
+			auto end = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double, std::milli> elapsed = end - start;
+			std::this_thread::sleep_for(std::chrono::milliseconds(16) - elapsed);
 		}
 		});
 }

@@ -139,6 +139,7 @@
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="GameMenu.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PongLoop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="PongLoop.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="SquareOne.ttf" />

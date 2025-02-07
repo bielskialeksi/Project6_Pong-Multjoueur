@@ -59,6 +59,7 @@ int Serveur::Update()
 		}
 		listenerThread = std::thread(&Serveur::ListenAndRead, this);
 	}
+
 	Send();
 	return 0;
 }
@@ -268,6 +269,7 @@ void Serveur::Send()
 {
 	for (LobbyTwoPlayers& lobby : ListLobbyTwoPlayers) {
 		if (lobby.ready) {
+			lobby.game->Loop();
 			CreateJson(&lobby);
 			std::lock_guard<std::mutex> lock(mtx_newJson);
 			int clientAddrSize = sizeof(lobby.player1);

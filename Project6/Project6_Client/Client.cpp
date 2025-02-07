@@ -123,7 +123,7 @@ void Client::Join(std::string name,std::string code)
 /// <summary>
 /// Listen the serveur and create next package and send to serveur;
 /// </summary>
-void Client::Update(int posPadx, int posPady)
+void Client::Update()
 {
 	if (!listening) {
 		listening = true;

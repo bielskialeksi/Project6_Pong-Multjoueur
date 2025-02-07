@@ -57,7 +57,7 @@ void PongLoop::Loop(sf::RenderWindow* window, Client* client)
         }
 	}
 
-    client->Update(0, 0);
+    client->Update();
     window->clear(sf::Color::Green);
     window->draw(ball->GetShape());
     window->draw(racket_1->GetShape());

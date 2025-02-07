@@ -53,7 +53,7 @@ public:
 	void Host(std::string name);
 	void Join(std::string name,std::string code);
 
-	void Update(int posPadx, int PosPady);
+	void Update();
 	int Disconnect();
 
 	void Move(bool UpOrDown);

@@ -7,22 +7,26 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <vector>
 #include <random>
+#include <thread>
 #include <string>
 
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
+#include "Game.h"
 
 
 
 struct LobbyTwoPlayers {
 	int index;
+	bool ready = false;
 	sockaddr_in player1;
 	std::string Player1Name;
 
 	sockaddr_in player2;
 	std::string Player2Name;
 
+	Game* game;
 	std::string code;
 };
 struct LobbyFourPlayers {
@@ -60,8 +64,11 @@ private:
 
 	int ballPosx, ballPosy, Dirx, Diry;
 
-	void CreateJson();
-	void ReadJson();
+	void CreateJson(LobbyTwoPlayers* lobby);
+
+	std::thread listenerThread;
+	bool listening;
+	int ListenAndRead();
 
 public:
 	Serveur();
@@ -75,8 +82,10 @@ public:
 	std::string CreateLobby(sockaddr_in newclient, std::string name);
 	void JoinLobby(sockaddr_in newclient);
 
-	void Send(sockaddr_in client , std::string message );
+	void Send();
 	bool compare_addresses(const sockaddr_in& addr1, const sockaddr_in& addr2);
 	bool isNullSockaddr(const sockaddr_in& addr);
+
+	void PlayerMove();
 };
 

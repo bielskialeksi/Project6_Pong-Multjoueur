@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "Global.h"
-#include "Vector2f.h"
 
 Game::Game()
 {
@@ -9,12 +8,12 @@ Game::Game()
 
 	resetBall = Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 	ball = resetBall;
-	ballScale = Vector2f(50, 50);
+	ballScale = Vector2f(50.f, 50.f);
 
-	racket_1 = Vector2f(50, 200);
-	racket_2 = Vector2f(WINDOW_WIDTH - 80, 200);
+	racket_1 = Vector2f(50.F, 200.f);
+	racket_2 = Vector2f(WINDOW_WIDTH - 80, 200.f);
 
-	scaleRacket = Vector2f(30, 100);
+	scaleRacket = Vector2f(30.f, 100.f);
 }
 
 void Game::Loop()               //Boucle de jeu

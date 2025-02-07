@@ -32,15 +32,15 @@ private:
 	void ReadJson();
 
 public:
-
-
-
 	int PosPLayer1x;
 	int PosPLayer1y;
-	int PosPLayer1x;
-	int PosPLayer1y;
+	
+	int PosPLayer2x;
+	int PosPLayer2y;
+	
 	int PosBallx;
 	int PosBally;
+
 	int DirBallx;
 	int DirBally;
 

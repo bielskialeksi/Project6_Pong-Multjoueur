@@ -15,3 +15,5 @@
 #define SCALE_RACKETX 30.f
 #define SCALE_RACKETY 100.f
 #define BASIC_SCALE 50.f
+
+#define SERVER_FRAMERATE 60

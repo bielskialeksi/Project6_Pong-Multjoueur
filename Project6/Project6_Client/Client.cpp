@@ -8,14 +8,15 @@ void Client::Listen()
 	char buffer[1024];
 	sockaddr_in senderAddr;
 	int senderLen = sizeof(senderAddr);
-	int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&senderAddr, (socklen_t*)&senderLen);
 
-	if (bytesReceived > 0) {
-		buffer[bytesReceived] = '\0';
-		//std::cout << " Message : " << buffer << std::endl;
-		jsonToRead = buffer;
+	while (running) {  // On écoute seulement si `running` est vrai
+		int bytesReceived = recvfrom(udpSocket, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&senderAddr, (socklen_t*)&senderLen);
+
+		if (bytesReceived > 0) {
+			buffer[bytesReceived] = '\0';
+			jsonToRead = buffer;
+		}
 	}
-	listening = false;
 }
 
 Client::Client()
@@ -24,9 +25,7 @@ Client::Client()
 
 Client::~Client()
 {
-	if (listenerThread.joinable()) {
-		listenerThread.join();  // Attend que le thread se termine proprement
-	}
+	Shutdown()
 }
 /// <summary>
 /// Mqke the first connexion with the serveur
@@ -155,8 +154,7 @@ int Client::Disconnect()
 	doc.Accept(writer);
 
 	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
-	closesocket(udpSocket);
-	WSACleanup();
+	Shutdown();
 	return 0;
 }
 
@@ -277,4 +275,19 @@ void Client::ReadJson()
 		clientCode = doc["Code"].GetString();
 		std::cout << "get code\n";
 	}
+}
+
+
+void Client::Shutdown()
+{
+	running = false;  // Arrête le thread d'écoute proprement
+
+	if (listenerThread.joinable()) {
+		listenerThread.join();  // Attend la fin du thread
+	}
+
+	closesocket(udpSocket);  // Ferme le socket
+	WSACleanup();  // Nettoie Winsock
+
+	std::cout << "Client fermé proprement.\n";
 }

@@ -32,6 +32,8 @@ private:
 	void CreateJson(int posPadx, int PosPady);
 	void ReadJson();
 
+	void Shutdown();
+	bool running = true;
 public:
 	int PosPLayer1x;
 	int PosPLayer1y;

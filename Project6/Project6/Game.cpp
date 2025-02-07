@@ -29,7 +29,7 @@ void Game::MovePlayer(int playerNum, bool Move)
 		if (Move && racket_1.y - RACKET_VELOCITY > 0) {
 			racket_1.y -= RACKET_VELOCITY;
 		}
-		else if (Move && racket_1.y + RACKET_VELOCITY < WINDOW_HEIGHT - scaleRacket.y) {
+		else if (racket_1.y + RACKET_VELOCITY < WINDOW_HEIGHT - scaleRacket.y) {
 			racket_1.y += RACKET_VELOCITY;
 		}
 		break;
@@ -37,7 +37,7 @@ void Game::MovePlayer(int playerNum, bool Move)
 		if (Move && racket_2.y - RACKET_VELOCITY > 0) {
 			racket_2.y -= RACKET_VELOCITY;
 		}
-		else if (Move && racket_2.y + RACKET_VELOCITY < WINDOW_HEIGHT - scaleRacket.y) {
+		else if (racket_2.y + RACKET_VELOCITY < WINDOW_HEIGHT - scaleRacket.y) {
 			racket_2.y += RACKET_VELOCITY;
 		}
 		break;

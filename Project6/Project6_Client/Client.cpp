@@ -12,7 +12,7 @@ void Client::Listen()
 
 	if (bytesReceived > 0) {
 		buffer[bytesReceived] = '\0';
-		std::cout << " Message : " << buffer << std::endl;
+		//std::cout << " Message : " << buffer << std::endl;
 		jsonToRead = buffer;
 	}
 	listening = false;
@@ -149,6 +149,7 @@ int Client::Disconnect()
 	doc.SetObject();
 	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 	doc.AddMember("Disconnect", 0, allocator);
+	doc.AddMember("IndexGame", lobby, allocator);
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	doc.Accept(writer);
@@ -158,6 +159,20 @@ int Client::Disconnect()
 	WSACleanup();
 	return 0;
 }
+
+void Client::Move(bool UpOrDown)
+{
+	rapidjson::Document newDoc;
+	newDoc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
+	doc.AddMember("Lobby", lobby, allocator);
+	doc.AddMember("Move", UpOrDown, allocator);
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	doc.Accept(writer);
+	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+}
+
 
 std::string Client::GetCodeClient()
 {
@@ -201,6 +216,10 @@ void Client::ReadJson()
 		return;
 	}
 	if (conected) {
+		if (doc.HasMember("AdvDisconect")) {
+			conected = false;
+			return;
+		}
 		//Read pos ADV
 		if (doc.HasMember("PlayerAdv") && doc["PlayerAdv"].IsObject()) {
 			const rapidjson::Value& playerAdv = doc["PlayerAdv"]; // Récupérer l'objet
@@ -238,7 +257,7 @@ void Client::ReadJson()
 	else if (doc.HasMember("NotFound") || doc.HasMember("Full")) {
 		/// 
 	}
-	else if (doc.HasMember("Hasjoin")) {
+	else if (doc.HasMember("HasJoin")) {
 		conected = true;
 	}
 	else if (doc.HasMember("Code")) {

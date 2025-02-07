@@ -15,6 +15,7 @@ class Client
 {
 private:
 	bool conected;
+	int lobby;
 
 	SOCKET udpSocket;
 	sockaddr_in serverAddr{};
@@ -55,7 +56,7 @@ public:
 	void Update(int posPadx, int PosPady);
 	int Disconnect();
 
-
+	void Move(bool UpOrDown);
 
 	bool IsConected() { return conected; };
 	std::string GetCodeClient();

@@ -21,12 +21,12 @@ void Game::Loop()               //Boucle de jeu
 	MoveBall();
 }
 
-void Game::MovePlayer(int playerNum, bool MoveUp)
+void Game::MovePlayer(int playerNum, bool Move)
 {
 	switch (playerNum)
 	{
 	case 0:
-		if (MoveUp && racket_1.y > 0) {
+		if (Move && racket_1.y > 0) {
 			racket_1.y = racket_1.y - RACKET_VELOCITY;
 		}
 		else if (racket_1.y < WINDOW_HEIGHT) {
@@ -34,7 +34,7 @@ void Game::MovePlayer(int playerNum, bool MoveUp)
 		}
 		break;
 	case 1:
-		if (MoveUp && racket_2.y > 0) {
+		if (Move && racket_2.y > 0) {
 			racket_2.y = racket_2.y - RACKET_VELOCITY;
 		}
 		else if (racket_2.y < WINDOW_HEIGHT) {

@@ -26,7 +26,7 @@ void GameLoop::Loop()
     PongLoop pong;
 
     while (window->isOpen()) {
-        if (isPlaying) {
+        if (client.IsConected()) {
             pong.Loop(window, &client);
         }
         else

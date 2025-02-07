@@ -67,8 +67,18 @@ int Serveur::Update()
 /// Delete a client in the list of connexion 
 /// </summary>
 /// <param name="client"></param>
-void Serveur::RemoveClientFromList(sockaddr_in client)
+void Serveur::RemoveClientFromList(sockaddr_in client, int indexLobby)
 {
+	if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player1)) {
+		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
+		delete(ListLobbyTwoPlayers[indexLobby].game);
+		ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
+	}
+	if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player2)) {
+		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
+		delete(ListLobbyTwoPlayers[indexLobby].game);
+		ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
+	}
 	auto it = std::find_if(clientAddr.begin(), clientAddr.end(),
 		[&](const sockaddr_in& addr) { return compare_addresses(addr, client); });
 	if (it != clientAddr.end()) {
@@ -121,8 +131,8 @@ std::string Serveur::CreateLobby(sockaddr_in newclient, std::string name)
 	memset(&newLobby.player2, 0, sizeof(sockaddr_in));
 	newLobby.player1 = newclient;
 	newLobby.Player1Name = name;
-	if(ListLobbyTwoPlayers.empty()) newLobby.index =0;
-	else newLobby.index =(int) ListLobbyTwoPlayers.size();
+	if (ListLobbyTwoPlayers.empty()) newLobby.index = 0;
+	else newLobby.index = (int)ListLobbyTwoPlayers.size();
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> distrib(10000, 99999);
@@ -213,6 +223,7 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 				newDoc.Accept(writer);
 				std::string jsonString = buffer.GetString();
 				sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&newclient, sizeof(newclient));
+				sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&lobby.player1, sizeof(lobby.player1));
 				AddList(baseclientadr);
 				lobby.ready = true;
 				std::cout << "join\n";
@@ -257,8 +268,7 @@ void Serveur::Send()
 {
 	for (LobbyTwoPlayers& lobby : ListLobbyTwoPlayers) {
 		if (lobby.ready) {
-			std::cout << "Serveur Send" << std::endl;
-			CreateJson(&lobby); 
+			CreateJson(&lobby);
 			std::lock_guard<std::mutex> lock(mtx_newJson);
 			int clientAddrSize = sizeof(lobby.player1);
 			sendto(udpSocket, newJson.c_str(), (int)strlen(newJson.c_str()), 0, (sockaddr*)&lobby.player1, clientAddrSize);
@@ -266,7 +276,7 @@ void Serveur::Send()
 			sendto(udpSocket, newJson.c_str(), (int)strlen(newJson.c_str()), 0, (sockaddr*)&lobby.player2, clientAddrSize);
 		}
 	}
-	
+
 }
 
 /// <summary>
@@ -294,7 +304,22 @@ bool Serveur::isNullSockaddr(const sockaddr_in& addr) {
 		addr.sin_addr.s_addr == 0;
 }
 
-void Serveur::PlayerMove()
+void Serveur::AdvDisconect(sockaddr_in player)
+{
+	rapidjson::Document newDoc;
+	newDoc.SetObject(); // Initialisation nécessaire
+	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
+	newDoc.AddMember("AdvDisconect", 1, allocator);
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	newDoc.Accept(writer);
+	std::string jsonString = buffer.GetString();
+	sendto(udpSocket, jsonString.c_str(), (int)jsonString.size(), 0, (sockaddr*)&player, sizeof(player));
+
+
+}
+
+void Serveur::PlayerMove(sockaddr_in client)
 {
 	if (doc.Parse(readJson.c_str()).HasParseError()) {
 		std::cerr << "Erreur de parsing JSON ! Erreur à l'index : " << doc.GetErrorOffset() << std::endl;
@@ -308,26 +333,20 @@ void Serveur::PlayerMove()
 	int lobby = doc["Lobby"].GetInt();
 
 	if (ListLobbyTwoPlayers[lobby].ready) {
-		//Make some verification
-		if (!doc.HasMember("Player") || !doc["Player"].IsObject()) {
-			std::cerr << "Erreur : 'join' est manquant ou n'est pas un objet !" << std::endl;
-			return;
-		}
-		const rapidjson::Value& player = doc["Player"];  // Récupérer l'objet "Player"
 
-		if (!player.HasMember("Name") || !player["Name"].IsString()) {
+		if (!doc.HasMember("Move") || !doc["Move"].IsBool()) {
 			std::cerr << "Erreur : 'name' est manquant ou n'est pas une chaîne de caractères !" << std::endl;
 			return;
 		}
-		if (!player.HasMember("Move") || !player["Move"].IsBool()) {
-			std::cerr << "Erreur : 'name' est manquant ou n'est pas une chaîne de caractères !" << std::endl;
-			return;
+
+		if (compare_addresses(client,ListLobbyTwoPlayers[lobby].player1)) {
+			ListLobbyTwoPlayers[lobby].game->MovePlayer(0, doc["Move"].GetBool());
 		}
-		if (player["Name"].GetString() == ListLobbyTwoPlayers[lobby].Player1Name) {
-			ListLobbyTwoPlayers[lobby].game->MovePlayer(0, player["Move"].GetBool());
+		else if (compare_addresses(client, ListLobbyTwoPlayers[lobby].player2)) {
+			ListLobbyTwoPlayers[lobby].game->MovePlayer(1, doc["Move"].GetBool());
 		}
-		else if (player["Name"].GetString() == ListLobbyTwoPlayers[lobby].Player2Name) {
-			ListLobbyTwoPlayers[lobby].game->MovePlayer(1, player["Move"].GetBool());
+		else {
+			std::cout << "Try to move in the wrong Lobby\n";
 		}
 	}
 
@@ -350,15 +369,16 @@ void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 	rapidjson::Document newDoc;
 	newDoc.SetObject(); // Initialisation nécessaire
 	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
-	std::cout << "1" << std::endl;
+
 	//Ball
+	newDoc.AddMember("Lobby", lobby->index, allocator);
 	rapidjson::Value Ball(rapidjson::kObjectType);
 	Ball.AddMember("Posx", lobby->game->ball.x, allocator);
 	Ball.AddMember("Posy", lobby->game->ball.y, allocator);
 	Ball.AddMember("Scalex", lobby->game->ballScale.x, allocator);
 	Ball.AddMember("Scaley", lobby->game->ballScale.y, allocator);
 	newDoc.AddMember("Ball", Ball, allocator);
-	std::cout << "2" << std::endl;
+
 	//Player 1
 	rapidjson::Value Player1(rapidjson::kObjectType);
 	Player1.AddMember("Posx", lobby->game->racket_1.x, allocator);
@@ -366,7 +386,7 @@ void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 	Player1.AddMember("Scalex", lobby->game->scaleRacket.x, allocator);
 	Player1.AddMember("Scaley", lobby->game->scaleRacket.y, allocator);
 	newDoc.AddMember("Player1", Player1, allocator);
-	std::cout << "3" << std::endl;
+
 	//Player 2
 	rapidjson::Value Player2(rapidjson::kObjectType);
 	Player2.AddMember("Posx", lobby->game->racket_2.x, allocator);
@@ -375,14 +395,14 @@ void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 	Player2.AddMember("Scaley", lobby->game->scaleRacket.y, allocator);
 	newDoc.AddMember("Player2", Player2, allocator);
 
-	std::cout << "4" << std::endl;
+
 	//Score
 	rapidjson::Value Score(rapidjson::kObjectType);
 	Score.AddMember("Score1", lobby->game->m_score.x, allocator);
 	Score.AddMember("Score2", lobby->game->m_score.y, allocator);
 	newDoc.AddMember("Score", Score, allocator);
 
-	std::cout << "5" << std::endl;
+
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	newDoc.Accept(writer);
@@ -390,7 +410,7 @@ void Serveur::CreateJson(LobbyTwoPlayers* lobby)
 	std::string jsonString = buffer.GetString();
 
 	newJson = jsonString;
-	std::cout << "end" << std::endl;
+
 }
 
 /// <summary>
@@ -435,17 +455,17 @@ int Serveur::ListenAndRead()
 		}
 		else if (doc.HasMember("Disconnect")) {
 			std::cout << "kill client...\n";
-			RemoveClientFromList(baseclientadr);
+			RemoveClientFromList(baseclientadr, doc["IndexGame"].GetInt());
 			listening = false;
 			return 1;
 		}
 		else if (doc.HasMember("Lobby")) {
-			PlayerMove();
+			PlayerMove(baseclientadr);
 			listening = false;
 			return 0;
 		}
 		// Répondre au client
-		std::cout<<"Message recu !\n";
+		std::cout << "Message recu !\n";
 	}
 	listening = false;
 	return 0;

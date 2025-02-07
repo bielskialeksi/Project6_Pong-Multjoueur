@@ -76,7 +76,7 @@ public:
 	~Serveur();
 	int Begin();
 	int Update();
-	void RemoveClientFromList(sockaddr_in client);
+	void RemoveClientFromList(sockaddr_in client, int indexLobby);
 	int Stop();
 	void AddList(sockaddr_in newclient);
 
@@ -86,7 +86,8 @@ public:
 	void Send();
 	bool compare_addresses(const sockaddr_in& addr1, const sockaddr_in& addr2);
 	bool isNullSockaddr(const sockaddr_in& addr);
+	void AdvDisconect(sockaddr_in player);
 
-	void PlayerMove();
+	void PlayerMove(sockaddr_in baseclientadr);
 };
 

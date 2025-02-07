@@ -13,6 +13,7 @@ void Client::Listen()
 	if (bytesReceived > 0) {
 		buffer[bytesReceived] = '\0';
 		//std::cout << " Message : " << buffer << std::endl;
+		if (!running) return;
 		jsonToRead = buffer;
 	}
 	listening = false;
@@ -25,6 +26,10 @@ Client::Client()
 Client::~Client()
 {
 	Shutdown();
+	if (listenerThread.joinable()) {
+		listenerThread.join();  // Attend la fin du thread
+	}
+
 }
 /// <summary>
 /// Mqke the first connexion with the serveur
@@ -285,8 +290,10 @@ void Client::Shutdown()
 		listenerThread.join();  // Attend la fin du thread
 	}
 
-	closesocket(udpSocket);  // Ferme le socket
-	WSACleanup();  // Nettoie Winsock
+	if (udpSocket != INVALID_SOCKET) {
+		closesocket(udpSocket);
+		udpSocket = INVALID_SOCKET;
+	}
 
 	std::cout << "Client fermé proprement.\n";
 }

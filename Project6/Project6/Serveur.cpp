@@ -73,8 +73,14 @@ void Serveur::RemoveClientFromList(sockaddr_in client, int indexLobby)
 {
 	if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player1)) {
 		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
-		delete(ListLobbyTwoPlayers[indexLobby].game);
-		ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
+		if (indexLobby >= 0 && indexLobby < ListLobbyTwoPlayers.size()) {
+			if (ListLobbyTwoPlayers[indexLobby].game != nullptr) {
+				delete ListLobbyTwoPlayers[indexLobby].game;
+				ListLobbyTwoPlayers[indexLobby].game = nullptr;  // Éviter un pointeur sauvage
+			}
+			ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
+		}
+		
 	}
 	if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player2)) {
 		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);

@@ -165,11 +165,11 @@ void Client::Move(bool UpOrDown)
 	rapidjson::Document newDoc;
 	newDoc.SetObject();
 	rapidjson::Document::AllocatorType& allocator = newDoc.GetAllocator();
-	doc.AddMember("Lobby", lobby, allocator);
-	doc.AddMember("Move", UpOrDown, allocator);
+	newDoc.AddMember("Lobby", lobby, allocator);
+	newDoc.AddMember("Move", UpOrDown, allocator);
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-	doc.Accept(writer);
+	newDoc.Accept(writer);
 	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 }
 

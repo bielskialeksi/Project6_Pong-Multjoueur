@@ -220,9 +220,9 @@ void Client::ReadJson()
 			conected = false;
 			return;
 		}
-		//Read pos ADV
-		if (doc.HasMember("PlayerAdv") && doc["PlayerAdv"].IsObject()) {
-			const rapidjson::Value& playerAdv = doc["PlayerAdv"]; // Récupérer l'objet
+		//Read pos Player1
+		if (doc.HasMember("Player1") && doc["Player1"].IsObject()) {
+			const rapidjson::Value& playerAdv = doc["Player1"]; // Récupérer l'objet
 
 			// Vérifier si "Posx" et "Posy" existent
 			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
@@ -232,25 +232,28 @@ void Client::ReadJson()
 				std::cout << "Posy : " << playerAdv["Posy"].GetInt() << std::endl;
 			}
 		}
+		//pos Player2
+		if (doc.HasMember("Player2") && doc["Player2"].IsObject()) {
+			const rapidjson::Value& playerAdv = doc["Player2"]; // Récupérer l'objet
 
+			// Vérifier si "Posx" et "Posy" existent
+			if (playerAdv.HasMember("Posx") && playerAdv["Posx"].IsInt()) {
+				PosPLayer2x = playerAdv["Posx"].GetInt();
+			}
+			if (playerAdv.HasMember("Posy") && playerAdv["Posy"].IsInt()) {
+				PosPLayer2y = playerAdv["Posy"].GetInt();
+			}
+		}
 		//Read pos Ball 
 		if (doc.HasMember("Ball") && doc["Ball"].IsObject()) {
 			const rapidjson::Value& Ball = doc["Ball"]; // Récupérer l'objet
 
 			// Vérifier si "Posx" et "Posy" existent
 			if (Ball.HasMember("Posx") && Ball["Posx"].IsInt()) {
-				std::cout << "Posx : " << Ball["Posx"].GetInt() << std::endl;
+				PosBallx = Ball["Posx"].GetInt();
 			}
 			if (Ball.HasMember("Posy") && Ball["Posy"].IsInt()) {
-				std::cout << "Posy : " << Ball["Posy"].GetInt() << std::endl;
-			}
-
-			// Vérifier si "Dirx" et "Diry" existent
-			if (Ball.HasMember("Dirx") && Ball["Dirx"].IsInt()) {
-				std::cout << "Dirx : " << Ball["Dirx"].GetInt() << std::endl;
-			}
-			if (Ball.HasMember("Diry") && Ball["Diry"].IsInt()) {
-				std::cout << "Diry : " << Ball["Diry"].GetInt() << std::endl;
+				PosBally = Ball["Posy"].GetInt();
 			}
 		}
 	}

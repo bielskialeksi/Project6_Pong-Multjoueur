@@ -25,7 +25,7 @@ Client::Client()
 
 Client::~Client()
 {
-	Shutdown()
+	Shutdown();
 }
 /// <summary>
 /// Mqke the first connexion with the serveur

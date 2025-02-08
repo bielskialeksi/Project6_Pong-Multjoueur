@@ -32,5 +32,4 @@ void GameLoop::Loop()
         else
             menu.Loop(window, &client);
     }
-    client.~Client();
 }

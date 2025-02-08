@@ -23,10 +23,12 @@ void GameMenu::LoadTexture()
 
 void GameMenu::Loop(sf::RenderWindow* window, Client* client)
 {
+    if (client == nullptr) {
+        return;
+    }
     sf::Event event;
     while (window->pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            client->Disconnect();
             window->close();
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {

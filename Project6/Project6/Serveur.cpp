@@ -96,20 +96,32 @@ int Serveur::Update()
 void Serveur::RemoveClientFromList(sockaddr_in client, int indexLobby)
 {
 	if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player1)) {
-		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
-		delete(ListLobbyTwoPlayers[indexLobby].game);
-		ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
+		if(!(ListLobbyTwoPlayers[indexLobby].player2.sin_family == 0 && ListLobbyTwoPlayers[indexLobby].player2.sin_port == 0 && ListLobbyTwoPlayers[indexLobby].player2.sin_addr.s_addr == 0))
+			AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
+		if (indexLobby >= 0 && indexLobby <= ListLobbyTwoPlayers.size()) {
+			if (ListLobbyTwoPlayers[indexLobby].game != nullptr) {
+				delete ListLobbyTwoPlayers[indexLobby].game;
+				ListLobbyTwoPlayers[indexLobby].game = nullptr;  // Éviter un pointeur sauvage
+			}
+			ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
+		}
 	}
-	if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player2)) {
-		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
-		delete(ListLobbyTwoPlayers[indexLobby].game);
-		ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
+	else if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player2)) {
+		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player1);
+		if (indexLobby >= 0 && indexLobby <= ListLobbyTwoPlayers.size()) {
+			if (ListLobbyTwoPlayers[indexLobby].game != nullptr) {
+				delete ListLobbyTwoPlayers[indexLobby].game;
+				ListLobbyTwoPlayers[indexLobby].game = nullptr;  // Éviter un pointeur sauvage
+			}
+			ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
+		}
 	}
 	auto it = std::find_if(clientAddr.begin(), clientAddr.end(),
 		[&](const sockaddr_in& addr) { return compare_addresses(addr, client); });
 	if (it != clientAddr.end()) {
 		clientAddr.erase(it);  // Supprimer le client de la liste
 		std::cout << "Client supprimé de la liste.\n";
+		std::cout << "Nbr Lobby:" << ListLobbyTwoPlayers.size() << std::endl;
 	}
 }
 
@@ -293,7 +305,7 @@ void Serveur::JoinLobby(sockaddr_in newclient)
 void Serveur::Send()
 {
 	for (LobbyTwoPlayers& lobby : ListLobbyTwoPlayers) {
-		if (lobby.ready) {
+		if (lobby.ready && lobby.game) {
 			lobby.game->Loop();
 			CreateJson(&lobby);
 			std::lock_guard<std::mutex> lock(mtx_newJson);
@@ -357,7 +369,7 @@ void Serveur::PlayerMove(sockaddr_in client)
 	}
 	int lobby = doc["Lobby"].GetInt();
 
-	if (ListLobbyTwoPlayers[lobby].ready) {
+	if (ListLobbyTwoPlayers[lobby].ready && ListLobbyTwoPlayers[lobby].game) {
 
 		if (!doc.HasMember("Move") || !doc["Move"].IsBool()) {
 			std::cerr << "Erreur : 'name' est manquant ou n'est pas une chaîne de caractères !" << std::endl;

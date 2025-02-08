@@ -49,7 +49,6 @@ private:
 	sf::Font font;
 	sf::Texture texture;
 
-	int actualMenuIndex = 0;
 	int selectedButtonIndex = 0;
 
 	int maxButtonIndex = MainMenu::MainMenu_Count;
@@ -81,5 +80,7 @@ public:
 	void InitRect(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, int id);
 	void InitText(sf::RenderWindow* window, std::string str, sf::Vector2f pos, sf::Color fillColor = sf::Color::Black, sf::Vector2f origin = { 0, 0 }, int fontSize = 30);
 	void InitUIBox(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, std::string str, int id, std::string placeholder = "");
+	
+	int actualMenuIndex = 0;
 };
 

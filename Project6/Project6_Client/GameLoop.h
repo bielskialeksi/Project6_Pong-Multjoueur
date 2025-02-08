@@ -11,5 +11,6 @@ public:
 	sf::RenderWindow* window;
 	
 	bool isPlaying = false;
+	bool hasPlayed = false;
 };
 

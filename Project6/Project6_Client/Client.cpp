@@ -25,6 +25,7 @@ Client::Client()
 
 Client::~Client()
 {
+
 	Shutdown();
 	if (listenerThread.joinable()) {
 		listenerThread.join();  // Attend la fin du thread
@@ -49,7 +50,7 @@ int Client::Connect()
 
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(50500);  // ⚠️ On utilise 50500
-	inet_pton(AF_INET, "192.168.58.177", &serverAddr.sin_addr);  // Adresse du serveur
+	inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);  // Adresse du serveur
 
 	//const char* message = "Hello, serveur UDP!";
 	//sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
@@ -212,6 +213,7 @@ void Client::CreateJson(int posPadx, int PosPady)
 void Client::ReadJson()
 {
 	std::cout << jsonToRead << std::endl;
+	doc.SetObject();
 	doc.Parse(jsonToRead.c_str());
 	if (doc.HasParseError()) {
 		std::cerr << "Erreur de parsing JSON !" << std::endl;
@@ -284,16 +286,31 @@ void Client::ReadJson()
 
 void Client::Shutdown()
 {
+	conected = false;
 	running = false;  // Arrête le thread d'écoute proprement
-
-	if (listenerThread.joinable()) {
-		listenerThread.join();  // Attend la fin du thread
-	}
 
 	if (udpSocket != INVALID_SOCKET) {
 		closesocket(udpSocket);
 		udpSocket = INVALID_SOCKET;
 	}
 
+
+	if (listenerThread.joinable()) {
+		try {
+			listenerThread.join();  // Attendre la fin du thread
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Erreur lors de la fermeture du thread : " << e.what() << std::endl;
+		}
+	}
+
+
+	if (doc.IsObject() && !doc.ObjectEmpty()) {
+		doc.RemoveAllMembers(); // Supprime tous les éléments de l'objet JSON
+	}
+
 	std::cout << "Client fermé proprement.\n";
+
+	assert(udpSocket == INVALID_SOCKET && "Tentative de fermeture d'un socket déjà fermé !");
+
 }

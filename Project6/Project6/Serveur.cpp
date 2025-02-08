@@ -96,19 +96,19 @@ int Serveur::Update()
 void Serveur::RemoveClientFromList(sockaddr_in client, int indexLobby)
 {
 	if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player1)) {
-		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
-		if (indexLobby >= 0 && indexLobby < ListLobbyTwoPlayers.size()) {
+		if(!(ListLobbyTwoPlayers[indexLobby].player2.sin_family == 0 && ListLobbyTwoPlayers[indexLobby].player2.sin_port == 0 && ListLobbyTwoPlayers[indexLobby].player2.sin_addr.s_addr == 0))
+			AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
+		if (indexLobby >= 0 && indexLobby <= ListLobbyTwoPlayers.size()) {
 			if (ListLobbyTwoPlayers[indexLobby].game != nullptr) {
 				delete ListLobbyTwoPlayers[indexLobby].game;
 				ListLobbyTwoPlayers[indexLobby].game = nullptr;  // Éviter un pointeur sauvage
 			}
 			ListLobbyTwoPlayers.erase(ListLobbyTwoPlayers.begin() + indexLobby);
 		}
-		
 	}
 	else if (compare_addresses(client, ListLobbyTwoPlayers[indexLobby].player2)) {
-		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player2);
-		if (indexLobby >= 0 && indexLobby < ListLobbyTwoPlayers.size()) {
+		AdvDisconect(ListLobbyTwoPlayers[indexLobby].player1);
+		if (indexLobby >= 0 && indexLobby <= ListLobbyTwoPlayers.size()) {
 			if (ListLobbyTwoPlayers[indexLobby].game != nullptr) {
 				delete ListLobbyTwoPlayers[indexLobby].game;
 				ListLobbyTwoPlayers[indexLobby].game = nullptr;  // Éviter un pointeur sauvage
@@ -121,6 +121,7 @@ void Serveur::RemoveClientFromList(sockaddr_in client, int indexLobby)
 	if (it != clientAddr.end()) {
 		clientAddr.erase(it);  // Supprimer le client de la liste
 		std::cout << "Client supprimé de la liste.\n";
+		std::cout << "Nbr Lobby:" << ListLobbyTwoPlayers.size() << std::endl;
 	}
 }
 

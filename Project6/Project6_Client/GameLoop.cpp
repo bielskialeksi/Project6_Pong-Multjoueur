@@ -27,9 +27,18 @@ void GameLoop::Loop()
 
     while (window->isOpen()) {
         if (client.IsConected()) {
+            if (!hasPlayed)
+                hasPlayed = true;
             pong.Loop(window, &client);
         }
         else
+        {
+            if (hasPlayed) {
+                menu.actualMenuIndex = Menu::Menu_Main;
+                hasPlayed = false;
+            }
             menu.Loop(window, &client);
+
+        }
     }
 }

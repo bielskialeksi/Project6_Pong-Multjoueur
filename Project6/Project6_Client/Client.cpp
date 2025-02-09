@@ -261,8 +261,8 @@ void Client::ReadJson()
 			if (Score.HasMember("Score1") && Score["Score1"].IsFloat()) {
 				score1= Score["Score1"].GetFloat();
 			}
-			if (Score.HasMember("Posy") && Score["Posy"].IsFloat()) {
-				score2 = Score["Posy"].GetFloat();
+			if (Score.HasMember("Score2") && Score["Score2"].IsFloat()) {
+				score2 = Score["Score2"].GetFloat();
 			}
 		}
 	}

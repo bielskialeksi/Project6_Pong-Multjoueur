@@ -5,7 +5,6 @@
 #include "PongLoop.h"
 #include "Global.h"
 
-#include "Client.h"
 GameLoop::GameLoop()
 {
     Init();
@@ -20,8 +19,7 @@ void GameLoop::Init()
 
 void GameLoop::Loop()
 {
-    Client client;
-    client.Connect();
+    if (client.Connect() == 1) return;
     GameMenu menu;
     PongLoop pong;
 

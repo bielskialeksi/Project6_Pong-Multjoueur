@@ -467,6 +467,10 @@ int Serveur::ListenAndRead()
 		buffer[bytesReceived] = '\0';
 		readJson = buffer;
 		std::cout << "Message reçu : " << buffer << "\n";
+		if (std::string(buffer) == "Listen serveur") {
+			sendto(udpSocket, "ok", strlen("ok"), 0, (sockaddr*)&baseclientadr, sizeof(baseclientadr));
+			return 0;
+		}
 		//ReadJson();
 		doc.Parse(readJson.c_str());
 		if (doc.HasParseError()) {
@@ -478,7 +482,6 @@ int Serveur::ListenAndRead()
 			std::cerr << "Erreur : JSON invalide ou incorrect. Contenu: " << readJson << std::endl;
 			return 1;
 		}
-
 		if (doc.HasMember("host")) {
 			std::string code = CreateLobby(baseclientadr, doc["name"].GetString());
 			AddList(baseclientadr);

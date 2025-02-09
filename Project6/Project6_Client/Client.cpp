@@ -17,6 +17,9 @@ void Client::Listen()
 		jsonToRead = buffer;
 	}
 	listening = false;
+
+
+
 }
 
 Client::Client()
@@ -48,10 +51,34 @@ int Client::Connect()
 	serverAddr.sin_port = htons(50500);  // ⚠️ On utilise 50500
 	inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);  // Adresse du serveur
 
-	//const char* message = "Hello, serveur UDP!";
-	//sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+	char buffer[1024];
+	sockaddr_in fromAddr;
+	int fromLen = sizeof(fromAddr);
+	const char* message = "Listen serveur";
 
-	std::cout << "Message envoyé au serveur UDP.\n";
+	while (!listenServeur) {
+		int result = sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
+		if (result == SOCKET_ERROR) {
+			std::cerr << "Erreur d'envoi : " << WSAGetLastError() << "\n";
+			break;
+		}
+
+		// Attente de réponse du serveur
+		int recvSize = recvfrom(udpSocket, buffer, sizeof(buffer) - 1, 0, (sockaddr*)&fromAddr, &fromLen);
+		if (recvSize > 0) {
+			buffer[recvSize] = '\0';  // Ajouter un terminateur à la chaîne
+			std::cout << "Réponse du serveur : " << buffer << std::endl;
+
+			if (std::string(buffer) == "ok") {  // Le serveur nous indique qu'il est prêt
+				listenServeur = true;
+			}
+		}
+		else {
+			std::cerr << "Aucune réponse du serveur, réessai...\n";
+		}
+
+		std::this_thread::sleep_for(std::chrono::seconds(1)); // Attendre avant de réessayer
+	}
 
 
 	return 0;
@@ -91,7 +118,7 @@ void Client::Host(std::string name)
 /// <summary>
 /// Join
 /// </summary>
-void Client::Join(std::string name,std::string code)
+void Client::Join(std::string name, std::string code)
 {
 	rapidjson::Document newDoc;
 	newDoc.SetObject();
@@ -259,7 +286,7 @@ void Client::ReadJson()
 
 			// Vérifier si "Posx" et "Posy" existent
 			if (Score.HasMember("Score1") && Score["Score1"].IsFloat()) {
-				score1= Score["Score1"].GetFloat();
+				score1 = Score["Score1"].GetFloat();
 			}
 			if (Score.HasMember("Score2") && Score["Score2"].IsFloat()) {
 				score2 = Score["Score2"].GetFloat();

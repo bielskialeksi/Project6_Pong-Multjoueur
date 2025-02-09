@@ -14,6 +14,7 @@
 class Client
 {
 private:
+	bool listenServeur = false;
 	bool conected;
 	int lobby;
 

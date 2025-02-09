@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <fstream>
+
 #include <winsock2.h>
 #include <ws2tcpip.h>  // Nécessaire pour inet_pton()
 #include <thread>
@@ -63,5 +65,9 @@ public:
 
 	bool IsConected() { return conected; };
 	std::string GetCodeClient();
+
+
+	std::string readIPAddressFromFile(const std::string& filename);
+	bool isValidIPAddress(const std::string& ip);
 };
 

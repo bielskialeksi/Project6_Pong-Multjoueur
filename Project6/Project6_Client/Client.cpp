@@ -45,18 +45,40 @@ int Client::Connect()
 		std::cerr << "Erreur de création du socket\n";
 		return 1;
 	}
-
+	
+	std::string ipAddress = readIPAddressFromFile("config.txt");
+	if (ipAddress.empty() || !isValidIPAddress(ipAddress)) {
+		std::cerr << "Adresse IP invalide ou absente dans le fichier.\n";
+		closesocket(udpSocket);
+		WSACleanup();
+		return 1;
+	}
 
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(50500);  // ⚠️ On utilise 50500
-	inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);  // Adresse du serveur
+	inet_pton(AF_INET, ipAddress.c_str(), &serverAddr.sin_addr);
 
 	char buffer[1024];
 	sockaddr_in fromAddr;
 	int fromLen = sizeof(fromAddr);
 	const char* message = "Listen serveur";
 
+	auto startTime = std::chrono::steady_clock::now();
+
+
 	while (!listenServeur) {
+
+		auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(
+			std::chrono::steady_clock::now() - startTime
+		).count();
+		if (elapsedTime >= 60) {
+			std::cerr << "Timeout : le serveur ne répond pas après 60 secondes. Fermeture du client...\n";
+			closesocket(udpSocket);
+			WSACleanup();
+			exit(1);
+		}
+
+
 		int result = sendto(udpSocket, message, strlen(message), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
 		if (result == SOCKET_ERROR) {
 			std::cerr << "Erreur d'envoi : " << WSAGetLastError() << "\n";
@@ -204,6 +226,7 @@ std::string Client::GetCodeClient()
 	return clientCode;
 }
 
+
 /// <summary>
 /// Create a package 
 /// </summary>
@@ -335,4 +358,33 @@ void Client::Shutdown()
 
 	assert(udpSocket == INVALID_SOCKET && "Tentative de fermeture d'un socket déjà fermé !");
 
+}
+
+
+
+
+
+std::string Client::readIPAddressFromFile(const std::string& filename)
+{
+	std::ifstream file(filename);
+	std::string ip;
+
+	if (file.is_open()) {
+		std::getline(file, ip);
+		file.close();
+	}
+	else {
+		std::cerr << "Erreur : Impossible d'ouvrir le fichier " << filename << "\n";
+		return "";
+	}
+
+	return ip;
+}
+
+
+
+bool Client::isValidIPAddress(const std::string& ip)
+{
+	sockaddr_in sa;
+	return inet_pton(AF_INET, ip.c_str(), &(sa.sin_addr)) == 1;
 }

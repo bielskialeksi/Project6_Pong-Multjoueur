@@ -5,7 +5,6 @@
 #include "PongLoop.h"
 #include "Global.h"
 
-#include "Client.h"
 GameLoop::GameLoop()
 {
     Init();
@@ -14,14 +13,14 @@ GameLoop::GameLoop()
 
 void GameLoop::Init()
 {
+    client.Connect();
     window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML depuis dossier projet !");
     window->setFramerateLimit(60);      //fps limit to 60
 }
 
 void GameLoop::Loop()
 {
-    Client client;
-    client.Connect();
+    if (client.Connect() == 1) return;
     GameMenu menu;
     PongLoop pong;
 

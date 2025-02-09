@@ -1,7 +1,10 @@
 #pragma once
+
+#include "Client.h"
 class GameLoop
 {
 private:
+	Client client;
 public:
 	GameLoop();
 

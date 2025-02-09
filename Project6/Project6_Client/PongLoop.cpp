@@ -74,12 +74,10 @@ void PongLoop::UpdateText()
 
 sf::String PongLoop::vector2fToString(const sf::Vector2i vector)
 {
-    std::ostringstream oss;
-    // Convertir les composantes du vecteur en chaîne
-    oss << m_score.x << " : " << m_score.y;
-    std::cout << m_score.y << std::endl;
-    // Retourner un sf::String
-    return sf::String(oss.str());
+    std::ostringstream oss;  
+    oss << vector.x << " : " << vector.y;               // Convertir les composantes du vecteur en chaîne
+
+    return sf::String(oss.str());                       // Retourner un sf::String
 }
 
 

@@ -41,7 +41,7 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
             else
                 selectedButtonIndex += 1;
 
-            std::cout << selectedButtonIndex << std::endl;
+            //std::cout << selectedButtonIndex << std::endl;
         }
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
         {
@@ -49,7 +49,7 @@ void GameMenu::Loop(sf::RenderWindow* window, Client* client)
                 selectedButtonIndex = maxButtonIndex - 1;
             else
                 selectedButtonIndex -= 1;
-            std::cout << selectedButtonIndex << std::endl;
+            //std::cout << selectedButtonIndex << std::endl;
         }
         switch (actualMenuIndex) {
         case Menu::Menu_Main :
@@ -96,13 +96,13 @@ void GameMenu::MainMenuEvents(sf::Event event)
         {
             actualMenuIndex = Menu::Menu_Host;
             maxButtonIndex = HostMenu::HostMenu_Count;
-            std::cout << "Host" << std::endl;
+            //std::cout << "Host" << std::endl;
         }
         if (selectedButtonIndex == MainMenu::MainMenu_JoinBtn)
         {
             actualMenuIndex = Menu::Menu_Join;
             maxButtonIndex = JoinMenu::JoinMenu_Count;
-            std::cout << "Join" << std::endl;
+            //std::cout << "Join" << std::endl;
         }
     }
 }
@@ -114,12 +114,12 @@ void GameMenu::HostMenuEvents(sf::Event event, Client* client)
         if (event.type == sf::Event::KeyPressed && event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z && pseudo.size() < 10)
         {
             pseudo.push_back(static_cast<char>(event.key.code - sf::Keyboard::A + 'a'));
-            std::cout << pseudo << std::endl;
+            //std::cout << pseudo << std::endl;
         }
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::BackSpace && pseudo.size() > 0)
         {
             pseudo.pop_back();
-            std::cout << pseudo << std::endl;
+            //std::cout << pseudo << std::endl;
         }
     }
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)
@@ -141,12 +141,12 @@ void GameMenu::JoinMenuEvents(sf::Event event, Client* client)
         if (event.type == sf::Event::KeyPressed && event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z && pseudo.size() < 10)
         {
             pseudo.push_back(static_cast<char>(event.key.code - sf::Keyboard::A + 'a'));
-            std::cout << pseudo << std::endl;
+            //std::cout << pseudo << std::endl;
         }
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::BackSpace && pseudo.size() > 0)
         {
             pseudo.pop_back();
-            std::cout << pseudo << std::endl;
+            //std::cout << pseudo << std::endl;
         }
     }
     if (selectedButtonIndex == JoinMenu::JoinMenu_GameIdField)
@@ -154,19 +154,19 @@ void GameMenu::JoinMenuEvents(sf::Event event, Client* client)
         if (event.type == sf::Event::KeyPressed && event.key.code >= sf::Keyboard::Numpad0 && event.key.code <= sf::Keyboard::Numpad9)
         {
             lobbyCode.push_back(static_cast<char>(event.key.code - sf::Keyboard::Numpad0 + '0'));
-            std::cout << lobbyCode << std::endl;
+            //std::cout << lobbyCode << std::endl;
         }
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::BackSpace && lobbyCode.size() > 0)
         {
             lobbyCode.pop_back();
-            std::cout << lobbyCode << std::endl;
+            //std::cout << lobbyCode << std::endl;
         }
     }
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)
     {
         if (selectedButtonIndex == JoinMenu::JoinMenu_JoinBtn && pseudo.size() > 0)
         {
-            std::cout << "Join" << std::endl;
+            //std::cout << "Join" << std::endl;
             client->Join(pseudo, lobbyCode);
         }
     }

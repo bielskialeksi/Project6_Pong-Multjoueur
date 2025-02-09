@@ -123,7 +123,7 @@ void Client::Join(std::string name,std::string code)
 	newDoc.Accept(writer);
 
 	sendto(udpSocket, buffer.GetString(), (int)strlen(buffer.GetString()), 0, (sockaddr*)&serverAddr, sizeof(serverAddr));
-	std::cout << "JSON envoyé : " << buffer.GetString() << std::endl;
+	//std::cout << "JSON envoyé : " << buffer.GetString() << std::endl;
 
 }
 
@@ -217,7 +217,7 @@ void Client::CreateJson(int posPadx, int PosPady)
 /// </summary>
 void Client::ReadJson()
 {
-	std::cout << jsonToRead << std::endl;
+	//std::cout << jsonToRead << std::endl;
 	doc.SetObject();
 	doc.Parse(jsonToRead.c_str());
 	if (doc.HasParseError()) {
@@ -284,7 +284,7 @@ void Client::ReadJson()
 	}
 	else if (doc.HasMember("Code")) {
 		clientCode = doc["Code"].GetString();
-		std::cout << "get code\n";
+		//::cout << "get code\n";
 	}
 }
 

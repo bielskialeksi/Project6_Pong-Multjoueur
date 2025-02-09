@@ -43,7 +43,7 @@ private:
 	std::string textureFilename = "metal_texture.jpg";
 
 	std::string pseudo;
-	
+
 	std::string lobbyCode;
 
 	sf::Font font;
@@ -58,7 +58,7 @@ private:
 	sf::RectangleShape Field1;
 	sf::RectangleShape Field2;
 
-	
+
 public:
 
 	GameMenu();
@@ -80,7 +80,7 @@ public:
 	void InitRect(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, int id);
 	void InitText(sf::RenderWindow* window, std::string str, sf::Vector2f pos, sf::Color fillColor = sf::Color::Black, sf::Vector2f origin = { 0, 0 }, int fontSize = 30);
 	void InitUIBox(sf::RenderWindow* window, sf::Vector2f size, sf::Vector2f pos, std::string str, int id, std::string placeholder = "");
-	
+
 	int actualMenuIndex = 0;
 };
 

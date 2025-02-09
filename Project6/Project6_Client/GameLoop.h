@@ -4,7 +4,7 @@
 class GameLoop
 {
 private:
-	Client client;
+	
 public:
 	GameLoop();
 

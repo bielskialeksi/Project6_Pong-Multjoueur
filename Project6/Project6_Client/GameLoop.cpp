@@ -19,6 +19,7 @@ void GameLoop::Init()
 
 void GameLoop::Loop()
 {
+    Client client;
     if (client.Connect() == 1) return;
     GameMenu menu;
     PongLoop pong;

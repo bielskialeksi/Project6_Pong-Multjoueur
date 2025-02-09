@@ -52,7 +52,7 @@ void PongLoop::UpdateElement(Client* client)
     ball->Move((float)client->PosBallx, (float)client->PosBally);
     racket_1->Move((float)client->PosPLayer1x, (float)client->PosPLayer1y);
     racket_2->Move((float)client->PosPLayer2x, (float)client->PosPLayer2y);
-    m_score = sf::Vector2i(client->score1, client->score2);
+    m_score = sf::Vector2i((int)client->score1,(int) client->score2);
     UpdateText();
 }
 

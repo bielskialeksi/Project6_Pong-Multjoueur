@@ -38,17 +38,17 @@ private:
 
 	void Shutdown();
 public:
-	int PosPLayer1x;
-	int PosPLayer1y;
+	float PosPLayer1x;
+	float PosPLayer1y;
 
-	int PosPLayer2x;
-	int PosPLayer2y;
+	float PosPLayer2x;
+	float PosPLayer2y;
 	
-	int PosBallx;
-	int PosBally;
+	float PosBallx;
+	float PosBally;
 
-	int score1;
-	int score2;
+	float score1;
+	float score2;
 
 	Client();
 	~Client();

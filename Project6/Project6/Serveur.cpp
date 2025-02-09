@@ -466,11 +466,11 @@ int Serveur::ListenAndRead()
 		}
 		buffer[bytesReceived] = '\0';
 		readJson = buffer;
-		std::cout << "Message reçu : " << buffer << "\n";
-		if (std::string(buffer) == "Listen serveur") {
-			sendto(udpSocket, "ok", strlen("ok"), 0, (sockaddr*)&baseclientadr, sizeof(baseclientadr));
-			return 0;
-		}
+		//std::cout << "Message reçu : " << buffer << "\n";
+		//if (std::string(buffer) == "Listen serveur") {
+		//	sendto(udpSocket, "ok", strlen("ok"), 0, (sockaddr*)&baseclientadr, sizeof(baseclientadr));
+		//	return 0;
+		//}
 		//ReadJson();
 		doc.Parse(readJson.c_str());
 		if (doc.HasParseError()) {

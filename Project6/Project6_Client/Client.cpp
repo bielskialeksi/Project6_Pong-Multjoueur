@@ -35,7 +35,7 @@ Client::~Client()
 int Client::Connect()
 {
 	WSADATA wsaData;
-	WSAStartup(MAKEWORD(2, 2), &wsaData);
+	int WSA = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 	udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
 	if (udpSocket == INVALID_SOCKET) {
